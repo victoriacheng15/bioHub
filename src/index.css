@@ -1,1 +1,8 @@
 @layer reset, base, tokens, recipes, utilities;
+
+@layer base {
+  body {
+    background-color: rgb(31 41 55);
+    color: rgb(245 245 245);
+  }
+}
