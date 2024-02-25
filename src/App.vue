@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { css } from "../styled-system/css";
+import { Header, LinkContainer, Footer } from "./components"
+import { NAME, HEADLINE } from "./constant"
 </script>
 
 <template>
-  <div :class="css({ fontSize: '5xl', fontWeight: 'bold', color: 'blue' })">Hello 🐼!</div>
+  <Header :name="NAME" :headline="HEADLINE" />
+  <LinkContainer />
+  <Footer :name="NAME" />
 </template>
