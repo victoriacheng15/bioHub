@@ -7,31 +7,31 @@ const LIST = [
     {
       title: "GitHub",
       href: "https://github.com/victoriacheng15",
-      path: "/icons/github.svg",
+      path: "./icons/github.svg",
       category: "social",
     },
     {
       title: "LinkedIn",
       href: "https://www.linkedin.com/in/victoriacheng15/",
-      path: "/icons/linkedin.svg",
+      path: "./icons/linkedin.svg",
       category: "social",
     },
     {
       title: "Twitter",
       href: "https://twitter.com/viktoriacheng15",
-      path: "/icons/twitter.svg",
+      path: "./icons/twitter.svg",
       category: "social",
     },
     {
       title: "YouTube",
       href: "https://www.youtube.com/@victoriacheng15",
-      path: "/icons/youtube.svg",
+      path: "./icons/youtube.svg",
       category: "social",
     },
     {
       title: "Buy me a coffee",
       href: "https://www.buymeacoffee.com/victoriacheng15",
-      path: "/icons/buymeacoffee.svg",
+      path: "./icons/buymeacoffee.svg",
       category: "social",
     },
     {
