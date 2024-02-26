@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { css } from "../../styled-system/css"
 const { name } = defineProps<{ name: string }>();
 </script>
 
 <template>
-  <footer>
+  <footer :class="css({ marginTop: 'auto', paddingBlock: '4' })">
     <p>
       Copyright &copy; <span aria-label="penguin emoji">🐧</span> {{ name }}
     </p>
