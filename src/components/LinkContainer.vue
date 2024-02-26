@@ -1,19 +1,19 @@
 <script setup lang="ts">
+import { css } from "../../styled-system/css"
 import { LINKS } from "../constant";
+
 </script>
 
 <template>
-  <main>
-    <section>
-      <ul>
-        <li v-for="{ title, href } in LINKS" :key="title">
-          <a :href="href" target="_blank" rel="noopener noreferrer">
-            <div>
-              <span>{{ title }}</span>
-            </div>
-          </a>
-        </li>
-      </ul>
-    </section>
+  <main :class="css({ w: '100%' })">
+    <ul :class="css({ display: 'grid', gap: '8' })">
+      <li v-for="{ title, href } in LINKS" :key="title"
+        :class="css({ w: '100%', h: '100%', display: 'grid', placeItems: 'center' })">
+        <a :href="href" target="_blank" rel="noopener noreferrer"
+          :class="css({ w: '100%', h: '100%', bg: 'gray.900', padding: '4', fontSize: '2xl', fontWeight: 'bold', letterSpacing: 'widest', textAlign: 'center', borderRadius: 'lg', _hover: { bg: 'blue.400', color: 'gray.900', transition: 'ease-in-out', transitionDuration: '400ms' } })">
+          {{ title }}
+        </a>
+      </li>
+    </ul>
   </main>
 </template>
