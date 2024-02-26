@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { css } from "../../styled-system/css"
+import SocialList from "./SocialList.vue";
 import avatar from "/avatar.jpg"
 const { name, headline } = defineProps<{ name: string; headline: string }>();
 const imageInfo = {
@@ -11,13 +12,12 @@ const imageInfo = {
 </script>
 
 <template>
-  <header :class="css({
-    display: 'flex', flexDir: 'column', justifyContent: 'center',
-    alignItems: 'center', gap: '6', marginBlockEnd: '12'
-  })">
-    <img :="imageInfo" :class="css({ marginInline: 'auto', borderRadius: '50%' })" />
-    <h1 :class="css({ textAlign: 'center', fontSize: '4xl' })">{{ name }}</h1>
-    <p :class="css({ textAlign: 'center', fontSize: 'xl' })">{{ headline }}</p>
-    <h2>test, this will have a list of social media links</h2>
+  <header :class="css({ w: '100%', mb: '14' })">
+    <div :class="css({ display: 'grid', gap: '4', mb: '8' })">
+      <img :="imageInfo" :class="css({ mx: 'auto', rounded: '50%' })" />
+      <h1 :class="css({ textAlign: 'center', fontSize: '4xl' })">{{ name }}</h1>
+      <p :class="css({ textAlign: 'center', fontSize: 'xl', })">{{ headline }}</p>
+    </div>
+    <SocialList />
   </header>
 </template>
