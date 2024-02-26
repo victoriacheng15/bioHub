@@ -8,11 +8,11 @@ import { NAME, HEADLINE } from "./constant"
 
 <template>
   <div :class="css({
-    height: '100vh',
-    maxW: '2xl',
-    marginInline: 'auto',
-    paddingTop: '12',
-    paddingInline: '8',
+    h: '100vh',
+    maxW: '3xl',
+    mx: 'auto',
+    pt: '12',
+    px: '8',
     display: 'flex',
     flexDir: 'column',
     justifyContent: 'center',
