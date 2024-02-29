@@ -9,13 +9,12 @@ import { NAME, HEADLINE } from "./constant"
 <template>
   <div :class="css({
     h: '100vh',
-    maxW: '3xl',
+    maxW: '2xl',
     mx: 'auto',
-    pt: '12',
-    px: '8',
+    pt: '10',
+    px: { base: '6', md: '10' },
     display: 'flex',
     flexDir: 'column',
-    justifyContent: 'center',
     alignItems: 'center'
   })">
     <Header :name="NAME" :headline="HEADLINE" />
