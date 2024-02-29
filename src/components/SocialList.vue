@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { css } from "../../styled-system/css"
 import { SCOIALS } from "../constant";
+import SocialElement from "./SocialElement.vue"
 
 const styles = css({
-  m: '2',
+  m: '1',
   p: '1.5',
   bg: 'blue.400',
-  rounded: 'lg',
+  rounded: 'md',
   transition: 'ease-in-out',
   transitionDuration: '400ms',
   _hover: { scale: '1.25', transition: 'ease-in-out', transitionDuration: '400ms' }
@@ -14,11 +15,9 @@ const styles = css({
 </script>
 
 <template>
-  <ul :class="css({ display: 'flex', justifyContent: 'center', gap: '6', flexWrap: 'wrap' })">
+  <ul :class="css({ display: 'flex', justifyContent: 'center', gap: { base: '2', md: '4', lg: '6' }, flexWrap: 'wrap' })">
     <li v-for="{ title, path, href } in  SCOIALS " :key="title" :class="styles">
-      <a :href="href" target="_blank" rel="noopener noreferrer">
-        <img :src="path" :alt="title" width="50" height="50" />
-      </a>
+      <SocialElement :href="href" :path="path" :altText="title" />
     </li>
   </ul>
 </template>
