@@ -14,7 +14,7 @@ const styles = css({
 
 <template>
   <main :class="css({ w: '100%', mb: '14' })">
-    <ul :class="css({ display: 'grid', gap: '8' })">
+    <ul :class="css({ display: 'grid', gap: { base: '4', sm: '6', md: '8' } })">
       <li v-for="{ title, href } in LINKS" :key="title" :class="styles">
         <LinkElement :href="href" :title="title" />
       </li>

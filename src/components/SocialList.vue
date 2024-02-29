@@ -15,7 +15,7 @@ const styles = css({
 </script>
 
 <template>
-  <ul :class="css({ display: 'flex', justifyContent: 'center', gap: { base: '2', md: '4', lg: '6' }, flexWrap: 'wrap' })">
+  <ul :class="css({ display: 'flex', justifyContent: 'center', gap: { base: '4', sm: '6' }, flexWrap: 'wrap' })">
     <li v-for="{ title, path, href } in  SCOIALS " :key="title" :class="styles">
       <SocialElement :href="href" :path="path" :altText="title" />
     </li>
