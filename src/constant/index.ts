@@ -1,6 +1,6 @@
 export const NAME = "Victoria Cheng";
 export const HEADLINE =
-	"🌊 Software Developer | React | TypeScript | Node.js | MongoDB | Docker | JavaScript";
+	"Software Developer | React | TypeScript | Python | Docker | Node.js | MongoDB";
 
 
 const LIST = [
