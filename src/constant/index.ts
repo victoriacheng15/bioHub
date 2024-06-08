@@ -40,7 +40,7 @@ const LIST = [
     },
     {
       title: "React Hooks Series",
-      href: "https://victoriacheng15.vercel.app/tags/react-hooks",
+      href: "https://victoriacheng15.vercel.app/tags/react",
     },
   ];
   
