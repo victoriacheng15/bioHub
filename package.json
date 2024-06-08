@@ -10,13 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.4.26"
+    "vue": "^3.4.27"
   },
   "devDependencies": {
-    "@pandacss/dev": "^0.39.0",
-    "@vitejs/plugin-vue": "^5.0.4",
+    "@pandacss/dev": "^0.40.1",
+    "@vitejs/plugin-vue": "^5.0.5",
     "typescript": "^5.4.5",
-    "vite": "^5.2.11",
-    "vue-tsc": "^2.0.16"
+    "vite": "^5.2.13",
+    "vue-tsc": "^2.0.21"
   }
 }
