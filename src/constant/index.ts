@@ -17,15 +17,21 @@ const LIST = [
       category: "social",
     },
     {
-      title: "Twitter",
-      href: "https://twitter.com/viktoriacheng15",
-      path: "./icons/twitter.svg",
+      title: "TikTok",
+      href: "https://www.tiktok.com/@victoriacheng15",
+      path: "./icons/tiktok.svg",
       category: "social",
     },
     {
-      title: "YouTube",
+      title: "youtube",
       href: "https://www.youtube.com/@victoriacheng15",
       path: "./icons/youtube.svg",
+      category: "social",
+    },
+    {
+      title: "Twitter",
+      href: "https://twitter.com/viktoriacheng15",
+      path: "./icons/twitter.svg",
       category: "social",
     },
     {
