@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { css } from "../../styled-system/css"
 import { LINKS } from "../constant";
 import LinkElement from "./LinkElement.vue";
 </script>
 
 <template>
-  <main :class="css({ w: '100%', mb: '14' })">
-    <ul :class="css({ display: 'grid', gap: { base: '4', sm: '6', md: '8' } })">
+  <main>
+    <ul>
       <li v-for="{ title, href } in LINKS" :key="title">
         <LinkElement :href="href" :title="title" />
       </li>
@@ -15,31 +14,30 @@ import LinkElement from "./LinkElement.vue";
 </template>
 
 <style scoped>
-li {
-  height: 60px;
-  background: #111827;
-  position: relative;
-  transform: rotate(-1deg);
+main {
+  margin: 3rem 0;
 }
 
-li:hover:before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -5px;
-  border-top: 30px solid transparent;
-  border-left: 40px solid rgb(31, 41, 55);
-  border-bottom: 30px solid transparent;
+ul {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
 }
 
-li:hover:after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: -5px;
-  border-top: 30px solid transparent;
-  border-right: 40px solid rgb(31, 41, 55);
-  border-bottom: 30px solid transparent;
+ul li {
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem;
+  width: 100%;
+  background: #1147bb;
+  border-radius: 5px;
+  transition: background 500ms ease-in-out;
+  cursor: pointer;
+}
 
+ul li:hover {
+  background: hsl(221, 83%, 20%);
 }
 </style>

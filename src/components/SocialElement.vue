@@ -9,3 +9,11 @@ const FIXEDSIZE = 45
     <img :src="path" :alt="altText" :width="FIXEDSIZE" :height="FIXEDSIZE" />
   </a>
 </template>
+
+<style scoped>
+img {
+  padding: 1px;
+  background: #f1f5f9;
+  border-radius: 5px;
+}
+</style>

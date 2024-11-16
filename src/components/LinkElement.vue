@@ -1,24 +1,19 @@
 <script setup lang="ts">
-import { css } from "../../styled-system/css"
 const { href, title } = defineProps<{ href: string, title: string }>()
 
-const styles = css({
-  w: '100%',
-  h: '100%',
-  bg: 'gray.900',
-  display: 'grid',
-  placeItems: 'center',
-  fontSize: { base: 'xl', md: '2xl' },
-  fontWeight: 'semibold',
-  letterSpacing: 'widest',
-  transition: 'ease-in-out',
-  transitionDuration: '400ms',
-  _hover: { bg: 'blue.400', color: 'gray.900', transition: 'ease-in-out', transitionDuration: '400ms' }
-})
 </script>
 
 <template>
-  <a :href="href" target="_blank" rel="noopener noreferrer" :class="styles">
+  <a :href="href" target="_blank" rel="noopener noreferrer">
     {{ title }}
   </a>
 </template>
+
+<style scoped>
+a {
+  font-size: 1.5rem;
+  color: #ffa375;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+</style>
