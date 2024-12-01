@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { SCOIALS } from "../constant";
-import SocialElement from "./SocialElement.vue"
+
+const FIXEDSIZE = 45
 </script>
 
 <template>
   <ul>
     <li v-for="{ title, path, href } in SCOIALS " :key="title">
-      <SocialElement :href="href" :path="path" :altText="title" />
+      <a :href="href" target="_blank" rel="noopener noreferrer">
+        <img :src="path" :alt="title" :width="FIXEDSIZE" :height="FIXEDSIZE" />
+      </a>
     </li>
   </ul>
 </template>
@@ -17,18 +20,17 @@ ul {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 1.25rem;
+  gap: 2rem;
 }
 
 ul li {
-  padding: 0.25rem;
-  background: #1147bb;
-  border-radius: 5px;
-  transition: padding 500ms ease-in-out;
+  padding: 0.5rem;
+  background: #60a5fa;
+  border-radius: 10px;
+  transition: background 500ms ease-in-out;
 }
 
 ul li:hover {
-  padding-inline: 0.75rem;
-
+  background: #1147bb;
 }
 </style>

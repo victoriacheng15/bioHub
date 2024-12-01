@@ -7,7 +7,9 @@ import LinkElement from "./LinkElement.vue";
   <main>
     <ul>
       <li v-for="{ title, href } in LINKS" :key="title">
-        <LinkElement :href="href" :title="title" />
+        <a :href="href" target="_blank" rel="noopener noreferrer">
+          {{ title }}
+        </a>
       </li>
     </ul>
   </main>
@@ -15,7 +17,7 @@ import LinkElement from "./LinkElement.vue";
 
 <style scoped>
 main {
-  margin: 3rem 0;
+  margin-block: 2rem;
 }
 
 ul {
@@ -23,7 +25,7 @@ ul {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.75rem;
 }
 
 ul li {
@@ -39,5 +41,12 @@ ul li {
 
 ul li:hover {
   background: hsl(221, 83%, 20%);
+}
+
+a {
+  color: #f1f5f9;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 2px;
 }
 </style>
