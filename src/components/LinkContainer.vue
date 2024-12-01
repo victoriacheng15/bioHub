@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { LINKS } from "../constant";
-import LinkElement from "./LinkElement.vue";
 </script>
 
 <template>
