@@ -24,11 +24,11 @@ const imageInfo = {
 
 <style scoped>
 header {
-  margin-top: 4rem;
+  margin-block: 3rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1.5rem;
   text-align: center;
 }
 
