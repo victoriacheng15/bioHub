@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import SocialList from "./SocialList.vue";
-import avatar from "/avatar.jpg"
+import avatar from "/avatar.jpg";
 
-const FIXEDSIZE = 175
+const FIXEDSIZE = 175;
 
 const { name, headline } = defineProps<{ name: string; headline: string }>();
 const imageInfo = {
-  src: avatar,
-  alt: name,
-  width: FIXEDSIZE,
-  height: FIXEDSIZE,
-}
+	src: avatar,
+	alt: name,
+	width: FIXEDSIZE,
+	height: FIXEDSIZE,
+};
 </script>
 
 <template>
