@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { SCOIALS } from "../constant";
 
-const FIXEDSIZE = 45
+const FIXEDSIZE = 45;
 </script>
 
 <template>

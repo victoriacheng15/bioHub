@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { Header, LinkContainer, Footer } from "./components"
-import { NAME, HEADLINE } from "./constant"
+import Header from "./components/Header.vue";
+import LinkContainer from "./components/LinkContainer.vue";
+import Footer from "./components/Footer.vue";
+import { NAME, HEADLINE } from "./constant";
 </script>
 
 <template>
