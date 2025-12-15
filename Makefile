@@ -14,4 +14,7 @@ clean:
 	rm -rf dist
 
 format:
-	go fmt -w ./cmd
+	go fmt ./cmd/...
+
+test:
+	go test ./cmd/... -v
