@@ -1,9 +1,60 @@
 # bioHub
 
-A centerized hub for all links!
+Centralize your social and portfolio links with this Go-powered static site generator. Easy to configure, theme, and deploy to GitHub Pages.
 
-## Tech Stacks
+## Tech Stack
 
-![Vue3](https://img.shields.io/badge/Vue.js-4FC08D.svg?style=for-the-badge&logo=vuedotjs&logoColor=white)
-![Typescript](https://img.shields.io/badge/TypeScript-3178C6.svg?style=for-the-badge&logo=TypeScript&logoColor=white)
-![Github Page](https://img.shields.io/badge/GitHub%20Pages-222222.svg?style=for-the-badge&logo=GitHub-Pages&logoColor=white)
+![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)
+![YAML](https://img.shields.io/badge/YAML-000000?style=for-the-badge&logo=yaml&logoColor=white)
+![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-222222?style=for-the-badge&logo=github-pages&logoColor=white)
+
+## Features
+
+- Simple YAML configuration for your profile, links, and theme
+- Generates a static HTML site using Go templates
+- Fully responsive, accessible, and lightweight
+- One-command build and automatic GitHub Pages deployment
+
+## Usage
+
+- **Edit your profile and links**:  
+  Update `config.yml` with your name, headline, avatar, social links, icons, and custom theme colors.
+
+- **Build the site**:  
+
+  ```sh
+  make build
+  ```  
+
+  This generates your static site in the `dist/` folder.
+
+- **Preview locally**:  
+  Open the `dist/` folder in VS Code and use the [Live Server extension](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) to preview your site with live reload. You can:
+  - Click **"Go Live"** in the status bar
+  - Right-click an HTML file in the Explorer and select **"Open with Live Server"**
+  - Use the keyboard shortcut:  
+    - Windows/Linux: `Alt+L, Alt+O` to start; `Alt+L, Alt+C` to stop  
+    - macOS: `Cmd+L, Cmd+O` to start; `Cmd+L, Cmd+C` to stop  
+  - Open the Command Palette (`F1` or `Ctrl+Shift+P`) and run **"Live Server: Open With Live Server"**
+
+- **Deploy**:  
+  Push to the `main` branch. A GitHub Action automatically deploys your site to GitHub Pages.
+
+## Folder Structure
+
+```text
+bioHub/
+├── cmd/
+│   └── build/
+│       └── main.go         # Go static site generator
+├── config.yml              # Profile, links, and theme config
+├── template/
+│   ├── index.html          # HTML template (with Go templating)
+│   └── static/
+│       ├── avatar.jpg      # Your avatar
+│       └── icons/          # Social icons (SVG recommended)
+├── dist/                   # Generated static site (do not edit)
+├── Makefile                # Build and dev commands
+├── README.md
+└── .github/workflows/      # GitHub Pages deployment workflow
+```
