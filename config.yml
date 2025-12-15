@@ -24,5 +24,7 @@ Params:
       URL: "https://buymeacoffee.com/yourname"
 
   Links:
-    - Name: "Blog"
+    - Name: "🐧 Portfolio Site"
       URL: "https://victoriacheng15.vercel.app/"
+    - Name: "Blog"
+      URL: "https://victoriacheng15.vercel.app/blog"
