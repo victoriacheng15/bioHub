@@ -22,8 +22,9 @@ type Theme struct {
 }
 
 type Social struct {
-	Icon string `yaml:"Icon"`
-	URL  string `yaml:"URL"`
+	Platform string `yaml:"Platform"`
+	Icon     string `yaml:"Icon"`
+	URL      string `yaml:"URL"`
 }
 
 type Link struct {

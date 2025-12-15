@@ -142,8 +142,8 @@
       <ul class="social-links">
         {{range .Params.Socials}}
         <li>
-          <a class="btn" href="{{.URL}}" target="_blank" rel="noopener">
-            <img src="{{.Icon}}" alt="Social icon" style="width: 45px; height: 45px;" />
+          <a class="btn" href="{{.URL}}" target="_blank" rel="noopener" aria-label="Visit me on {{.Platform}}">
+            <img src="{{.Icon}}" alt="{{.Platform}} icon" style="width: 45px; aspect-ratio: 1;" />
           </a>
         </li>
         {{end}}
