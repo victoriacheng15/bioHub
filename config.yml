@@ -1,0 +1,28 @@
+Params:
+  Avatar: "static/avatar.jpg"
+  Name: "Victoria Cheng"
+  Headline: "Building apps that ship & get used | SAIT ’26 Software Development | Shopify Eng Intern | TypeScript, Python, Go"
+
+  Theme:
+    Background: "#1f2937"
+    Text: "#ffa375"
+    Button: "#60a5fa"
+    ButtonText: "#f1f5f9"
+    ButtonHover: "#1147bb"
+    Link: "#1147bb"
+    LinkText: "#f1f5f9"
+    LinkHover: "#09265D"
+
+  Socials:
+    - Icon: "static/icons/github.svg"
+      URL: "https://github.com/yourname"
+    - Icon: "static/icons/linkedin.svg"
+      URL: "https://linkedin.com/in/yourname"
+    - Icon: "static/icons/youtube.svg"
+      URL: "https://youtube.com/yourchannel"
+    - Icon: "static/icons/buymeacoffee.svg"
+      URL: "https://buymeacoffee.com/yourname"
+
+  Links:
+    - Name: "Blog"
+      URL: "https://victoriacheng15.vercel.app/"

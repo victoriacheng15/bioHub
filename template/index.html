@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <title>BioHub - {{.Params.Name}}</title>
+  <meta name="description" content="BioHub - {{.Params.Name}}">
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: {{.Params.Theme.Background}};
+      color: {{.Params.Theme.Text}};
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    #app {
+      min-height: 100vh;
+      width: min(90%, 600px);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    header {
+      margin: 3rem auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      justify-content: center;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      letter-spacing: 3px;
+    }
+
+    header img {
+      border-radius: 50%;
+      width: 150px;
+      aspect-ratio: 1;
+    }
+
+    header p {
+      font-size: 1.25rem;
+      letter-spacing: 2px;
+      text-align: center;
+      line-height: 1.25;
+    }
+
+    header ul, main, ul {
+      list-style: none;
+    }
+
+    header ul {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .btn {
+      background: {{.Params.Theme.Button}};
+      color: {{.Params.Theme.ButtonText}};
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem;
+      border-radius: 10px;
+      transition: background 500ms ease-in-out;
+    }
+
+    .btn:hover {
+      background: {{.Params.Theme.ButtonHover}};
+    }
+
+    .social-links .btn img {
+      border-radius: 6px;
+    }
+
+    main {
+      width: 100%;
+    }
+
+    main ul {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 1.75rem;
+    }
+
+    main ul li {
+      display: flex;
+      justify-content: center;
+      padding: 0.75rem;
+      width: 100%;
+      background: {{.Params.Theme.Link}};
+      border-radius: 10px;
+      transition: background 500ms ease-in-out;
+      cursor: pointer;
+    }
+
+    main ul li:hover {
+      background: {{.Params.Theme.LinkHover}};
+    }
+
+    main ul li a {
+      color: {{.Params.Theme.LinkText}};
+      font-size: 1.5rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+
+    footer {
+      margin-top: auto;
+      padding-block: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <header>
+      <img src="{{.Params.Avatar}}" alt="{{.Params.Name}}'s avatar" />
+      <h1>{{.Params.Name}}</h1>
+      <p>{{.Params.Headline}}</p>
+      <ul class="social-links">
+        {{range .Params.Socials}}
+        <li>
+          <a class="btn" href="{{.URL}}" target="_blank" rel="noopener">
+            <img src="{{.Icon}}" alt="Social icon" style="width: 45px; height: 45px;" />
+          </a>
+        </li>
+        {{end}}
+      </ul>
+    </header>
+    <main>
+      <ul>
+        {{range .Params.Links}}
+        <li>
+          <a href="{{.URL}}" target="_blank" rel="noopener">{{.Name}}</a>
+        </li>
+        {{end}}
+      </ul>
+    </main>
+    <footer>
+      <p>Copyright &copy; <span aria-label="penguin emoji">🐧</span> {{.Params.Name}}</p>
+    </footer>
+  </div>
+</body>
+
+</html>

@@ -1,8 +1,9 @@
-name: Deployment
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: ["main"]
+    branches: [main]
+    paths: ['template/**', 'cmd/**', 'config.yml']
   workflow_dispatch:
 
 permissions:
@@ -18,30 +19,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
-          node-version: 20
-          cache: "npm"
-      - name: Install dependencies and build
-        run: |
-          npm install
-          npm run build
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+          go-version: '1.25'
+      
+      - name: Build static site
+        run: make build
+      
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4.0.0
         with:
-          path: "./dist"
+          path: ./dist
+
   deploy:
-    needs: [build]
+    needs: build
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v4.0.5
+    
