@@ -14,14 +14,18 @@ Params:
     LinkHover: "#09265D"
 
   Socials:
-    - Icon: "static/icons/github.svg"
-      URL: "https://github.com/yourname"
-    - Icon: "static/icons/linkedin.svg"
-      URL: "https://linkedin.com/in/yourname"
-    - Icon: "static/icons/youtube.svg"
-      URL: "https://youtube.com/yourchannel"
-    - Icon: "static/icons/buymeacoffee.svg"
-      URL: "https://buymeacoffee.com/yourname"
+    - Platform: "GitHub"
+      Icon: "static/icons/github.svg"
+      URL: "https://github.com/victoriacheng15"
+    - Platform: "LinkedIn"
+      Icon: "static/icons/linkedin.svg"
+      URL: "https://linkedin.com/in/victoriacheng15"
+    - Platform: "YouTube"
+      Icon: "static/icons/youtube.svg"
+      URL: "https://www.youtube.com/@victoriacheng15"
+    - Platform: "Buy Me a Coffee"
+      Icon: "static/icons/buymeacoffee.svg"
+      URL: "https://buymeacoffee.com/victoriacheng15"
 
   Links:
     - Name: "🐧 Portfolio Site"
