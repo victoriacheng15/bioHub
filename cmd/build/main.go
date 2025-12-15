@@ -100,18 +100,50 @@ func CopyDir(src string, dst string) error {
 	})
 }
 
-func main() {
+func BuildSite(configPath, templatePath, outputDir, staticSrcDir, staticDstDir string) error {
 	// Create output directories
-	if err := os.MkdirAll("dist/static", 0755); err != nil {
-		fmt.Fprintf(os.Stderr, "Error creating dist/static: %v\n", err)
-		os.Exit(1)
+	if err := os.MkdirAll(staticDstDir, 0755); err != nil {
+		return fmt.Errorf("error creating output directory: %w", err)
 	}
 
 	// Load configuration from config.yml
+	config, err := LoadConfig(configPath)
+	if err != nil {
+		return fmt.Errorf("error loading config: %w", err)
+	}
+
+	// Parse the HTML template
+	tmpl, err := template.ParseFiles(templatePath)
+	if err != nil {
+		return fmt.Errorf("error parsing template: %w", err)
+	}
+
+	// Create output HTML file
+	out, err := os.Create(filepath.Join(outputDir, "index.html"))
+	if err != nil {
+		return fmt.Errorf("error creating output file: %w", err)
+	}
+	defer out.Close()
+
+	// Render template with config data
+	if err := tmpl.Execute(out, config); err != nil {
+		return fmt.Errorf("error rendering template: %w", err)
+	}
+
+	// Copy static files
+	if err := CopyDir(staticSrcDir, staticDstDir); err != nil {
+		return fmt.Errorf("error copying static files: %w", err)
+	}
+
+	return nil
+}
+
+func run() int {
+	// Load configuration to display debug info
 	config, err := LoadConfig("config.yml")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error loading config.yml: %v\n", err)
-		os.Exit(1)
+		return 1
 	}
 
 	// Debug: Print loaded config
@@ -124,33 +156,17 @@ func main() {
 	fmt.Printf("  Links: %d\n", len(config.Params.Links))
 	fmt.Println()
 
-	// Parse the HTML template from template/index.html
-	tmpl, err := template.ParseFiles("template/index.html")
+	// Build the site
+	err = BuildSite("config.yml", "template/index.html", "dist", "template/static", "dist/static")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error parsing template: %v\n", err)
-		os.Exit(1)
-	}
-
-	// Create output HTML file in dist/
-	out, err := os.Create("dist/index.html")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error creating dist/index.html: %v\n", err)
-		os.Exit(1)
-	}
-	defer out.Close()
-
-	// Render template with config data and write to dist/index.html
-	if err := tmpl.Execute(out, config); err != nil {
-		fmt.Fprintf(os.Stderr, "Error rendering template: %v\n", err)
-		os.Exit(1)
-	}
-
-	// Copy entire template folder (including static assets) to dist/
-	err = CopyDir("template/static", "dist/static")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error copying template files: %v\n", err)
-		os.Exit(1)
+		fmt.Fprintf(os.Stderr, "Error building site: %v\n", err)
+		return 1
 	}
 
 	fmt.Println("Build complete. Files are in dist/")
+	return 0
+}
+
+func main() {
+	os.Exit(run())
 }

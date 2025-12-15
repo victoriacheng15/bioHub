@@ -14,4 +14,13 @@ clean:
 	rm -rf dist
 
 format:
-	go fmt -w ./cmd
+	go fmt ./cmd/...
+
+test:
+	go test ./cmd/... -v
+
+coverage:
+	go test -cover ./cmd/...
+
+coverage-html:
+	go test -coverprofile=coverage.out ./cmd/... && go tool cover -html=coverage.out
