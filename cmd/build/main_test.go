@@ -212,10 +212,18 @@ func TestCopyDir(t *testing.T) {
 		testFile2 := filepath.Join(srcDir, "file2.txt")
 		subDir := filepath.Join(srcDir, "subdir")
 
-		os.WriteFile(testFile1, []byte("content1"), 0644)
-		os.WriteFile(testFile2, []byte("content2"), 0644)
-		os.MkdirAll(subDir, 0755)
-		os.WriteFile(filepath.Join(subDir, "file3.txt"), []byte("content3"), 0644)
+		if err := os.WriteFile(testFile1, []byte("content1"), 0644); err != nil {
+			t.Fatalf("Failed to write file1.txt: %v", err)
+		}
+		if err := os.WriteFile(testFile2, []byte("content2"), 0644); err != nil {
+			t.Fatalf("Failed to write file2.txt: %v", err)
+		}
+		if err := os.MkdirAll(subDir, 0755); err != nil {
+			t.Fatalf("Failed to create subdir: %v", err)
+		}
+		if err := os.WriteFile(filepath.Join(subDir, "file3.txt"), []byte("content3"), 0644); err != nil {
+			t.Fatalf("Failed to write file3.txt: %v", err)
+		}
 
 		// Copy directory
 		err := CopyDir(srcDir, dstDir)
@@ -248,8 +256,12 @@ func TestCopyDir(t *testing.T) {
 		dstDir := t.TempDir()
 
 		// Create .gitkeep file
-		os.WriteFile(filepath.Join(srcDir, ".gitkeep"), []byte(""), 0644)
-		os.WriteFile(filepath.Join(srcDir, "real_file.txt"), []byte("content"), 0644)
+		if err := os.WriteFile(filepath.Join(srcDir, ".gitkeep"), []byte(""), 0644); err != nil {
+			t.Fatalf("Failed to write .gitkeep: %v", err)
+		}
+		if err := os.WriteFile(filepath.Join(srcDir, "real_file.txt"), []byte("content"), 0644); err != nil {
+			t.Fatalf("Failed to write real_file.txt: %v", err)
+		}
 
 		err := CopyDir(srcDir, dstDir)
 		if err != nil {
@@ -569,7 +581,9 @@ func TestBuildSite(t *testing.T) {
 	t.Run("build fails with invalid config path", func(t *testing.T) {
 		tmpDir := t.TempDir()
 		templatePath := filepath.Join(tmpDir, "template.html")
-		os.WriteFile(templatePath, []byte("<html></html>"), 0644)
+		if err := os.WriteFile(templatePath, []byte("<html></html>"), 0644); err != nil {
+			t.Fatalf("Failed to write template file: %v", err)
+		}
 
 		outputDir := filepath.Join(tmpDir, "dist")
 		staticSrcDir := filepath.Join(tmpDir, "static")
@@ -609,7 +623,9 @@ func TestBuildSite(t *testing.T) {
   Socials: []
   Links: []
 `
-		os.WriteFile(configPath, []byte(configContent), 0644)
+		if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
+			t.Fatalf("Failed to write config file: %v", err)
+		}
 
 		outputDir := filepath.Join(tmpDir, "dist")
 		staticSrcDir := filepath.Join(tmpDir, "static")
@@ -649,11 +665,15 @@ func TestBuildSite(t *testing.T) {
   Socials: []
   Links: []
 `
-		os.WriteFile(configPath, []byte(configContent), 0644)
+		if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
+			t.Fatalf("Failed to write config file: %v", err)
+		}
 
 		// Create valid template
 		templatePath := filepath.Join(tmpDir, "template.html")
-		os.WriteFile(templatePath, []byte("<html><body>{{.Params.Name}}</body></html>"), 0644)
+		if err := os.WriteFile(templatePath, []byte("<html><body>{{.Params.Name}}</body></html>"), 0644); err != nil {
+			t.Fatalf("Failed to write template file: %v", err)
+		}
 
 		outputDir := filepath.Join(tmpDir, "dist")
 		staticDstDir := filepath.Join(outputDir, "static")
@@ -692,7 +712,9 @@ func TestBuildSite(t *testing.T) {
   Socials: []
   Links: []
 `
-		os.WriteFile(configPath, []byte(configContent), 0644)
+		if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
+			t.Fatalf("Failed to write config file: %v", err)
+		}
 
 		// Create template
 		templatePath := filepath.Join(tmpDir, "template.html")
@@ -700,11 +722,15 @@ func TestBuildSite(t *testing.T) {
 {{range .Params.Socials}}<a>{{.Platform}}</a>{{end}}
 {{range .Params.Links}}<a>{{.Name}}</a>{{end}}
 </body></html>`
-		os.WriteFile(templatePath, []byte(templateContent), 0644)
+		if err := os.WriteFile(templatePath, []byte(templateContent), 0644); err != nil {
+			t.Fatalf("Failed to write template file: %v", err)
+		}
 
 		// Create empty static dir
 		staticSrcDir := filepath.Join(tmpDir, "static")
-		os.MkdirAll(staticSrcDir, 0755)
+		if err := os.MkdirAll(staticSrcDir, 0755); err != nil {
+			t.Fatalf("Failed to create static directory: %v", err)
+		}
 
 		outputDir := filepath.Join(tmpDir, "dist")
 		staticDstDir := filepath.Join(outputDir, "static")
@@ -740,15 +766,21 @@ func TestBuildSite(t *testing.T) {
   Socials: []
   Links: []
 `
-		os.WriteFile(configPath, []byte(configContent), 0644)
+		if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
+			t.Fatalf("Failed to write config file: %v", err)
+		}
 
 		// Create template
 		templatePath := filepath.Join(tmpDir, "template.html")
-		os.WriteFile(templatePath, []byte("<html></html>"), 0644)
+		if err := os.WriteFile(templatePath, []byte("<html></html>"), 0644); err != nil {
+			t.Fatalf("Failed to write template file: %v", err)
+		}
 
 		// Create static dir
 		staticSrcDir := filepath.Join(tmpDir, "static")
-		os.MkdirAll(staticSrcDir, 0755)
+		if err := os.MkdirAll(staticSrcDir, 0755); err != nil {
+			t.Fatalf("Failed to create static directory: %v", err)
+		}
 
 		// Use an invalid path that cannot be created (path with non-existent parent)
 		outputDir := filepath.Join(tmpDir, "dist")
@@ -855,7 +887,9 @@ func TestRun(t *testing.T) {
   Socials: []
   Links: []
 `
-		os.WriteFile(configPath, []byte(configContent), 0644)
+		if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
+			t.Fatalf("Failed to write config file: %v", err)
+		}
 
 		// Run should fail with exit code 1 (template/index.html doesn't exist)
 		exitCode := run()
