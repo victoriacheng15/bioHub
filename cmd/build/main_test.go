@@ -6,28 +6,41 @@ import (
 	"testing"
 )
 
-// Helper function to check if string contains substring
-func contains(str, substr string) bool {
-	return len(str) > 0 && len(substr) > 0 && (str == substr || len(str) > len(substr) && (str[:len(substr)] == substr || str[len(str)-len(substr):] == substr || findSubstring(str, substr)))
-}
+// ============================================================================
+// Test Fixture Helpers (Plan #2)
+// ============================================================================
 
-func findSubstring(str, substr string) bool {
-	for i := 0; i <= len(str)-len(substr); i++ {
-		if str[i:i+len(substr)] == substr {
-			return true
-		}
+// getMinimalTheme returns a Theme struct with only essential fields
+func getMinimalTheme() Theme {
+	return Theme{
+		Background:  "#ffffff",
+		Text:        "#000000",
+		Button:      "#000000",
+		ButtonText:  "#ffffff",
+		ButtonHover: "#000000",
+		Link:        "#000000",
+		LinkText:    "#ffffff",
+		LinkHover:   "#000000",
 	}
-	return false
 }
 
-// TestLoadConfig groups all LoadConfig tests
-func TestLoadConfig(t *testing.T) {
-	t.Run("valid config", func(t *testing.T) {
-		// Create a temporary config file
-		tmpDir := t.TempDir()
-		configPath := filepath.Join(tmpDir, "config.yml")
+// getFullTheme returns a complete Theme struct with all colors set
+func getFullTheme() Theme {
+	return Theme{
+		Background:  "#1f2937",
+		Text:        "#ffa375",
+		Button:      "#60a5fa",
+		ButtonText:  "#f1f5f9",
+		ButtonHover: "#1147bb",
+		Link:        "#1147bb",
+		LinkText:    "#f1f5f9",
+		LinkHover:   "#09265D",
+	}
+}
 
-		configContent := `Params:
+// getValidConfigYAML returns standard YAML config content for testing
+func getValidConfigYAML() string {
+	return `Params:
   Avatar: "static/avatar.jpg"
   Name: "Test User"
   Headline: "Test Headline"
@@ -48,11 +61,92 @@ func TestLoadConfig(t *testing.T) {
     - Name: "Website"
       URL: "https://example.com"
 `
+}
 
-		err := os.WriteFile(configPath, []byte(configContent), 0644)
-		if err != nil {
-			t.Fatalf("Failed to create test config file: %v", err)
+// createTempConfigFile creates a temporary config file with error checking
+func createTempConfigFile(t *testing.T, tmpDir, filename, content string) string {
+	configPath := filepath.Join(tmpDir, filename)
+	err := os.WriteFile(configPath, []byte(content), 0644)
+	if err != nil {
+		t.Fatalf("Failed to create test config file: %v", err)
+	}
+	return configPath
+}
+
+// createFullTestSetup creates complete test environment with all necessary directories and files
+func createFullTestSetup(t *testing.T, configYAML, templateContent string) (tmpDir, configPath, templatePath, staticSrcDir, staticDstDir, outputDir string) {
+	tmpDir = t.TempDir()
+
+	// Create config file
+	configPath = createTempConfigFile(t, tmpDir, "config.yml", configYAML)
+
+	// Create template directory and file
+	templateDir := filepath.Join(tmpDir, "template")
+	if err := os.MkdirAll(templateDir, 0755); err != nil {
+		t.Fatalf("Failed to create template directory: %v", err)
+	}
+
+	templatePath = filepath.Join(templateDir, "index.html")
+	if err := os.WriteFile(templatePath, []byte(templateContent), 0644); err != nil {
+		t.Fatalf("Failed to create template file: %v", err)
+	}
+
+	// Create static source directory
+	staticSrcDir = filepath.Join(templateDir, "static")
+	if err := os.MkdirAll(staticSrcDir, 0755); err != nil {
+		t.Fatalf("Failed to create static directory: %v", err)
+	}
+
+	// Create output and static destination directories
+	outputDir = filepath.Join(tmpDir, "dist")
+	staticDstDir = filepath.Join(outputDir, "static")
+
+	return tmpDir, configPath, templatePath, staticSrcDir, staticDstDir, outputDir
+}
+
+// Helper function to check if string contains substring
+func contains(str, substr string) bool {
+	if len(str) == 0 || len(substr) == 0 {
+		return false
+	}
+
+	if str == substr {
+		return true
+	}
+
+	if len(str) > len(substr) {
+		// Check prefix
+		if str[:len(substr)] == substr {
+			return true
 		}
+		// Check suffix
+		if str[len(str)-len(substr):] == substr {
+			return true
+		}
+		// Check anywhere else
+		if findSubstring(str, substr) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func findSubstring(str, substr string) bool {
+	for i := 0; i <= len(str)-len(substr); i++ {
+		if str[i:i+len(substr)] == substr {
+			return true
+		}
+	}
+	return false
+}
+
+// TestLoadConfig groups all LoadConfig tests
+func TestLoadConfig(t *testing.T) {
+	t.Run("valid config", func(t *testing.T) {
+		// Create a temporary config file
+		tmpDir := t.TempDir()
+		configPath := createTempConfigFile(t, tmpDir, "config.yml", getValidConfigYAML())
 
 		config, err := LoadConfig(configPath)
 		if err != nil {
@@ -94,17 +188,10 @@ func TestLoadConfig(t *testing.T) {
 
 	t.Run("invalid YAML", func(t *testing.T) {
 		tmpDir := t.TempDir()
-		configPath := filepath.Join(tmpDir, "invalid.yml")
+		configPath := createTempConfigFile(t, tmpDir, "invalid.yml", `This is not: valid: YAML: [
+`)
 
-		invalidContent := `This is not: valid: YAML: [
-`
-
-		err := os.WriteFile(configPath, []byte(invalidContent), 0644)
-		if err != nil {
-			t.Fatalf("Failed to create test file: %v", err)
-		}
-
-		_, err = LoadConfig(configPath)
+		_, err := LoadConfig(configPath)
 		if err == nil {
 			t.Error("Expected error for invalid YAML, got nil")
 		}
@@ -112,7 +199,6 @@ func TestLoadConfig(t *testing.T) {
 
 	t.Run("multiple socials and links", func(t *testing.T) {
 		tmpDir := t.TempDir()
-		configPath := filepath.Join(tmpDir, "config.yml")
 
 		configContent := `Params:
   Avatar: "test.jpg"
@@ -141,7 +227,7 @@ func TestLoadConfig(t *testing.T) {
       URL: "https://blog.example.com"
 `
 
-		os.WriteFile(configPath, []byte(configContent), 0644)
+		configPath := createTempConfigFile(t, tmpDir, "config.yml", configContent)
 		config, _ := LoadConfig(configPath)
 
 		// Test multiple socials
@@ -319,17 +405,8 @@ func TestTemplateRendering(t *testing.T) {
 	t.Run("config with all theme colors", func(t *testing.T) {
 		config := Config{
 			Params: Params{
-				Name: "Test",
-				Theme: Theme{
-					Background:  "#1f2937",
-					Text:        "#ffa375",
-					Button:      "#60a5fa",
-					ButtonText:  "#f1f5f9",
-					ButtonHover: "#1147bb",
-					Link:        "#1147bb",
-					LinkText:    "#f1f5f9",
-					LinkHover:   "#09265D",
-				},
+				Name:  "Test",
+				Theme: getFullTheme(),
 			},
 		}
 
@@ -369,16 +446,7 @@ func TestStructsAndTypes(t *testing.T) {
 	})
 
 	t.Run("theme struct with all colors", func(t *testing.T) {
-		theme := Theme{
-			Background:  "#1f2937",
-			Text:        "#ffa375",
-			Button:      "#60a5fa",
-			ButtonText:  "#f1f5f9",
-			ButtonHover: "#1147bb",
-			Link:        "#1147bb",
-			LinkText:    "#f1f5f9",
-			LinkHover:   "#09265D",
-		}
+		theme := getFullTheme()
 
 		colors := []string{
 			theme.Background, theme.Text, theme.Button, theme.ButtonText,
@@ -397,7 +465,7 @@ func TestStructsAndTypes(t *testing.T) {
 			Avatar:   "avatar.jpg",
 			Name:     "Victoria",
 			Headline: "Developer",
-			Theme:    Theme{Background: "#fff", Text: "#000"},
+			Theme:    getMinimalTheme(),
 			Socials:  []Social{{Platform: "GitHub", Icon: "gh.svg", URL: "https://github.com"}},
 			Links:    []Link{{Name: "Site", URL: "https://example.com"}},
 		}
@@ -415,7 +483,6 @@ func TestStructsAndTypes(t *testing.T) {
 func TestConfigIntegration(t *testing.T) {
 	t.Run("full config load and data flow", func(t *testing.T) {
 		tmpDir := t.TempDir()
-		configPath := filepath.Join(tmpDir, "config.yml")
 
 		configContent := `Params:
   Avatar: "avatar.jpg"
@@ -446,7 +513,7 @@ func TestConfigIntegration(t *testing.T) {
       URL: "https://victoria.dev/resume"
 `
 
-		os.WriteFile(configPath, []byte(configContent), 0644)
+		configPath := createTempConfigFile(t, tmpDir, "config.yml", configContent)
 		config, err := LoadConfig(configPath)
 
 		if err != nil {
@@ -490,35 +557,6 @@ func TestConfigIntegration(t *testing.T) {
 // TestBuildSite groups all BuildSite function tests
 func TestBuildSite(t *testing.T) {
 	t.Run("successful build with valid config and template", func(t *testing.T) {
-		tmpDir := t.TempDir()
-
-		// Create config file
-		configPath := filepath.Join(tmpDir, "config.yml")
-		configContent := `Params:
-  Avatar: "avatar.jpg"
-  Name: "Test User"
-  Headline: "Test Headline"
-  Theme:
-    Background: "#1f2937"
-    Text: "#ffffff"
-    Button: "#60a5fa"
-    ButtonText: "#f1f5f9"
-    ButtonHover: "#1147bb"
-    Link: "#1147bb"
-    LinkText: "#f1f5f9"
-    LinkHover: "#09265D"
-  Socials:
-    - Platform: "GitHub"
-      Icon: "github.svg"
-      URL: "https://github.com/test"
-  Links:
-    - Name: "Website"
-      URL: "https://example.com"
-`
-		os.WriteFile(configPath, []byte(configContent), 0644)
-
-		// Create template file
-		templatePath := filepath.Join(tmpDir, "template.html")
 		templateContent := `<!DOCTYPE html>
 <html>
 <head>
@@ -535,16 +573,12 @@ func TestBuildSite(t *testing.T) {
   {{end}}
 </body>
 </html>`
-		os.WriteFile(templatePath, []byte(templateContent), 0644)
 
-		// Create source static directory
-		staticSrcDir := filepath.Join(tmpDir, "static")
-		os.MkdirAll(staticSrcDir, 0755)
-		os.WriteFile(filepath.Join(staticSrcDir, "style.css"), []byte("body { margin: 0; }"), 0644)
+		_, configPath, templatePath, staticSrcDir, staticDstDir, outputDir := createFullTestSetup(t, getValidConfigYAML(), templateContent)
 
-		// Create output directory
-		outputDir := filepath.Join(tmpDir, "dist")
-		staticDstDir := filepath.Join(outputDir, "static")
+		if err := os.WriteFile(filepath.Join(staticSrcDir, "style.css"), []byte("body { margin: 0; }"), 0644); err != nil {
+			t.Fatalf("Failed to write style sheet: %v", err)
+		}
 
 		// Run BuildSite
 		err := BuildSite(configPath, templatePath, outputDir, staticSrcDir, staticDstDir)
@@ -792,40 +826,6 @@ func TestRun(t *testing.T) {
 		}
 		defer os.Chdir(originalDir)
 
-		// Create temporary workspace
-		tmpDir := t.TempDir()
-		os.Chdir(tmpDir)
-
-		// Create config.yml
-		configPath := filepath.Join(tmpDir, "config.yml")
-		configContent := `Params:
-  Avatar: "avatar.jpg"
-  Name: "Test User"
-  Headline: "Test Headline"
-  Theme:
-    Background: "#1f2937"
-    Text: "#ffffff"
-    Button: "#60a5fa"
-    ButtonText: "#f1f5f9"
-    ButtonHover: "#1147bb"
-    Link: "#1147bb"
-    LinkText: "#f1f5f9"
-    LinkHover: "#09265D"
-  Socials:
-    - Platform: "GitHub"
-      Icon: "github.svg"
-      URL: "https://github.com/test"
-  Links:
-    - Name: "Website"
-      URL: "https://example.com"
-`
-		os.WriteFile(configPath, []byte(configContent), 0644)
-
-		// Create template directory and file
-		templateDir := filepath.Join(tmpDir, "template")
-		os.MkdirAll(templateDir, 0755)
-
-		templatePath := filepath.Join(templateDir, "index.html")
 		templateContent := `<!DOCTYPE html>
 <html>
 <head>
@@ -836,12 +836,13 @@ func TestRun(t *testing.T) {
   <p>{{.Params.Headline}}</p>
 </body>
 </html>`
-		os.WriteFile(templatePath, []byte(templateContent), 0644)
 
-		// Create static directory
-		staticDir := filepath.Join(templateDir, "static")
-		os.MkdirAll(staticDir, 0755)
-		os.WriteFile(filepath.Join(staticDir, "style.css"), []byte("body { margin: 0; }"), 0644)
+		tmpDir, _, _, staticSrcDir, _, _ := createFullTestSetup(t, getValidConfigYAML(), templateContent)
+		os.Chdir(tmpDir)
+
+		if err := os.WriteFile(filepath.Join(staticSrcDir, "style.css"), []byte("body { margin: 0; }"), 0644); err != nil {
+			t.Fatalf("Failed to write style sheet: %v", err)
+		}
 
 		// Run should succeed
 		exitCode := run()

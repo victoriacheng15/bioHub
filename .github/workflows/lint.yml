@@ -30,7 +30,7 @@ jobs:
           echo "✅ Go code is properly formatted"
 
       - name: Run go vet
-        run: go vet ./cmd/*
+        run: go vet ./cmd/...
     
   test:
     runs-on: ubuntu-latest
