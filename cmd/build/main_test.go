@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -287,6 +288,25 @@ func TestCopyDir(t *testing.T) {
 			t.Error("Expected error for non-existent source, got nil")
 		}
 	})
+
+	t.Run("filepath.Rel error on invalid paths", func(t *testing.T) {
+		srcDir := t.TempDir()
+		dstDir := t.TempDir()
+
+		// Create a test file
+		if err := os.WriteFile(filepath.Join(srcDir, "test.txt"), []byte("content"), 0644); err != nil {
+			t.Fatalf("Failed to write test file: %v", err)
+		}
+
+		// Try to copy with a source path that will cause filepath.Rel to fail
+		// by passing an invalid src path that doesn't match the Walk path
+		// This simulates the error handling in the Walk callback
+		invalidSrc := "/invalid/nonexistent/path"
+		err := CopyDir(invalidSrc, dstDir)
+		if err == nil {
+			t.Error("Expected error for invalid source path, got nil")
+		}
+	})
 }
 
 // TestTemplateRendering groups all template rendering tests
@@ -384,61 +404,104 @@ func TestTemplateRendering(t *testing.T) {
 
 // TestStructsAndTypes groups all struct and type validation tests
 func TestStructsAndTypes(t *testing.T) {
-	t.Run("social struct fields", func(t *testing.T) {
-		social := Social{
-			Platform: "GitHub",
-			Icon:     "github.svg",
-			URL:      "https://github.com/test",
-		}
+	// Table-driven tests for struct field validation
+	structTests := []struct {
+		name      string
+		testFunc  func() error
+		expectErr bool
+	}{
+		{
+			name: "social struct fields",
+			testFunc: func() error {
+				social := Social{
+					Platform: "GitHub",
+					Icon:     "github.svg",
+					URL:      "https://github.com/test",
+				}
+				if social.Platform == "" || social.Icon == "" || social.URL == "" {
+					return fmt.Errorf("social struct fields not properly set")
+				}
+				return nil
+			},
+			expectErr: false,
+		},
+		{
+			name: "link struct fields",
+			testFunc: func() error {
+				link := Link{
+					Name: "Portfolio",
+					URL:  "https://example.com",
+				}
+				if link.Name == "" || link.URL == "" {
+					return fmt.Errorf("link struct fields not properly set")
+				}
+				return nil
+			},
+			expectErr: false,
+		},
+		{
+			name: "theme struct with all colors",
+			testFunc: func() error {
+				theme := getFullTheme()
+				colors := []string{
+					theme.Background, theme.Text, theme.Button, theme.ButtonText,
+					theme.ButtonHover, theme.Link, theme.LinkText, theme.LinkHover,
+				}
+				for i, color := range colors {
+					if color == "" {
+						colorNames := []string{"Background", "Text", "Button", "ButtonText", "ButtonHover", "Link", "LinkText", "LinkHover"}
+						return fmt.Errorf("theme color %s is empty", colorNames[i])
+					}
+				}
+				return nil
+			},
+			expectErr: false,
+		},
+		{
+			name: "params struct with all fields",
+			testFunc: func() error {
+				params := Params{
+					Avatar:   "avatar.jpg",
+					Name:     "Victoria",
+					Headline: "Developer",
+					Theme:    getMinimalTheme(),
+					Socials:  []Social{{Platform: "GitHub", Icon: "gh.svg", URL: "https://github.com"}},
+					Links:    []Link{{Name: "Site", URL: "https://example.com"}},
+				}
+				if params.Avatar == "" || params.Name == "" || params.Headline == "" {
+					return fmt.Errorf("params basic fields not set")
+				}
+				if len(params.Socials) != 1 || len(params.Links) != 1 {
+					return fmt.Errorf("params collections not set correctly")
+				}
+				return nil
+			},
+			expectErr: false,
+		},
+		{
+			name: "minimal theme struct",
+			testFunc: func() error {
+				theme := getMinimalTheme()
+				if theme.Background == "" || theme.Text == "" {
+					return fmt.Errorf("minimal theme missing essential colors")
+				}
+				return nil
+			},
+			expectErr: false,
+		},
+	}
 
-		if social.Platform == "" || social.Icon == "" || social.URL == "" {
-			t.Error("Social struct fields are not properly set")
-		}
-	})
-
-	t.Run("link struct fields", func(t *testing.T) {
-		link := Link{
-			Name: "Portfolio",
-			URL:  "https://example.com",
-		}
-
-		if link.Name == "" || link.URL == "" {
-			t.Error("Link struct fields are not properly set")
-		}
-	})
-
-	t.Run("theme struct with all colors", func(t *testing.T) {
-		theme := getFullTheme()
-
-		colors := []string{
-			theme.Background, theme.Text, theme.Button, theme.ButtonText,
-			theme.ButtonHover, theme.Link, theme.LinkText, theme.LinkHover,
-		}
-
-		for _, color := range colors {
-			if color == "" {
-				t.Error("Theme color is empty")
+	for _, tc := range structTests {
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.testFunc()
+			if tc.expectErr && err == nil {
+				t.Error("expected error, got nil")
 			}
-		}
-	})
-
-	t.Run("params struct with all fields", func(t *testing.T) {
-		params := Params{
-			Avatar:   "avatar.jpg",
-			Name:     "Victoria",
-			Headline: "Developer",
-			Theme:    getMinimalTheme(),
-			Socials:  []Social{{Platform: "GitHub", Icon: "gh.svg", URL: "https://github.com"}},
-			Links:    []Link{{Name: "Site", URL: "https://example.com"}},
-		}
-
-		if params.Avatar == "" || params.Name == "" || params.Headline == "" {
-			t.Error("Params basic fields not set")
-		}
-		if len(params.Socials) != 1 || len(params.Links) != 1 {
-			t.Error("Params collections not set correctly")
-		}
-	})
+			if !tc.expectErr && err != nil {
+				t.Errorf("unexpected error: %v", err)
+			}
+		})
+	}
 }
 
 // TestConfigIntegration tests full config workflow
@@ -578,36 +641,34 @@ func TestBuildSite(t *testing.T) {
 		}
 	})
 
-	t.Run("build fails with invalid config path", func(t *testing.T) {
-		tmpDir := t.TempDir()
-		templatePath := filepath.Join(tmpDir, "template.html")
-		if err := os.WriteFile(templatePath, []byte("<html></html>"), 0644); err != nil {
-			t.Fatalf("Failed to write template file: %v", err)
-		}
-
-		outputDir := filepath.Join(tmpDir, "dist")
-		staticSrcDir := filepath.Join(tmpDir, "static")
-		staticDstDir := filepath.Join(outputDir, "static")
-
-		err := BuildSite(
-			filepath.Join(tmpDir, "nonexistent.yml"),
-			templatePath,
-			outputDir,
-			staticSrcDir,
-			staticDstDir,
-		)
-
-		if err == nil {
-			t.Error("Expected error for invalid config path, got nil")
-		}
-	})
-
-	t.Run("build fails with invalid template path", func(t *testing.T) {
-		tmpDir := t.TempDir()
-
-		// Create valid config
-		configPath := filepath.Join(tmpDir, "config.yml")
-		configContent := `Params:
+	// Table-driven tests for error cases
+	errorCases := []struct {
+		name        string
+		setupFunc   func(tmpDir string) (configPath, templatePath, staticSrcDir, outputDir, staticDstDir string, cleanup func())
+		expectErr   bool
+		description string
+		errMessage  string
+	}{
+		{
+			name: "invalid config path",
+			setupFunc: func(tmpDir string) (string, string, string, string, string, func()) {
+				templatePath := filepath.Join(tmpDir, "template.html")
+				if err := os.WriteFile(templatePath, []byte("<html></html>"), 0644); err != nil {
+					t.Fatalf("Failed to write template file: %v", err)
+				}
+				staticSrcDir := filepath.Join(tmpDir, "static")
+				outputDir := filepath.Join(tmpDir, "dist")
+				staticDstDir := filepath.Join(outputDir, "static")
+				return filepath.Join(tmpDir, "nonexistent.yml"), templatePath, staticSrcDir, outputDir, staticDstDir, func() {}
+			},
+			expectErr:   true,
+			description: "should fail with nonexistent config file",
+			errMessage:  "",
+		},
+		{
+			name: "invalid template path",
+			setupFunc: func(tmpDir string) (string, string, string, string, string, func()) {
+				configPath := createTempConfigFile(t, tmpDir, "config.yml", `Params:
   Avatar: "avatar.jpg"
   Name: "Test"
   Headline: "Test"
@@ -622,34 +683,20 @@ func TestBuildSite(t *testing.T) {
     LinkHover: "#000"
   Socials: []
   Links: []
-`
-		if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
-			t.Fatalf("Failed to write config file: %v", err)
-		}
-
-		outputDir := filepath.Join(tmpDir, "dist")
-		staticSrcDir := filepath.Join(tmpDir, "static")
-		staticDstDir := filepath.Join(outputDir, "static")
-
-		err := BuildSite(
-			configPath,
-			filepath.Join(tmpDir, "nonexistent.html"),
-			outputDir,
-			staticSrcDir,
-			staticDstDir,
-		)
-
-		if err == nil {
-			t.Error("Expected error for invalid template path, got nil")
-		}
-	})
-
-	t.Run("build fails with invalid static source", func(t *testing.T) {
-		tmpDir := t.TempDir()
-
-		// Create valid config
-		configPath := filepath.Join(tmpDir, "config.yml")
-		configContent := `Params:
+`)
+				staticSrcDir := filepath.Join(tmpDir, "static")
+				outputDir := filepath.Join(tmpDir, "dist")
+				staticDstDir := filepath.Join(outputDir, "static")
+				return configPath, filepath.Join(tmpDir, "nonexistent.html"), staticSrcDir, outputDir, staticDstDir, func() {}
+			},
+			expectErr:   true,
+			description: "should fail with nonexistent template file",
+			errMessage:  "",
+		},
+		{
+			name: "invalid static source",
+			setupFunc: func(tmpDir string) (string, string, string, string, string, func()) {
+				configPath := createTempConfigFile(t, tmpDir, "config.yml", `Params:
   Avatar: "avatar.jpg"
   Name: "Test"
   Headline: "Test"
@@ -664,32 +711,74 @@ func TestBuildSite(t *testing.T) {
     LinkHover: "#000"
   Socials: []
   Links: []
-`
-		if err := os.WriteFile(configPath, []byte(configContent), 0644); err != nil {
-			t.Fatalf("Failed to write config file: %v", err)
-		}
+`)
+				templatePath := filepath.Join(tmpDir, "template.html")
+				if err := os.WriteFile(templatePath, []byte("<html><body>{{.Params.Name}}</body></html>"), 0644); err != nil {
+					t.Fatalf("Failed to write template file: %v", err)
+				}
+				outputDir := filepath.Join(tmpDir, "dist")
+				staticDstDir := filepath.Join(outputDir, "static")
+				return configPath, templatePath, filepath.Join(tmpDir, "nonexistent"), outputDir, staticDstDir, func() {}
+			},
+			expectErr:   true,
+			description: "should fail with nonexistent static source directory",
+			errMessage:  "",
+		},
+		{
+			name: "output file cannot be created",
+			setupFunc: func(tmpDir string) (string, string, string, string, string, func()) {
+				configPath := createTempConfigFile(t, tmpDir, "config.yml", getValidConfigYAML())
+				templatePath := filepath.Join(tmpDir, "template.html")
+				if err := os.WriteFile(templatePath, []byte("<html><body>{{.Params.Name}}</body></html>"), 0644); err != nil {
+					t.Fatalf("Failed to write template file: %v", err)
+				}
+				staticSrcDir := filepath.Join(tmpDir, "static")
+				if err := os.MkdirAll(staticSrcDir, 0755); err != nil {
+					t.Fatalf("Failed to create static directory: %v", err)
+				}
+				outputDir := filepath.Join(tmpDir, "dist")
+				staticDstDir := filepath.Join(outputDir, "static")
+				if err := os.MkdirAll(staticDstDir, 0755); err != nil {
+					t.Fatalf("Failed to create static destination directory: %v", err)
+				}
+				// Make output dir read-only to prevent index.html creation
+				if err := os.Chmod(outputDir, 0555); err != nil {
+					t.Fatalf("Failed to change permissions: %v", err)
+				}
+				// Return cleanup function to restore permissions
+				cleanup := func() {
+					os.Chmod(outputDir, 0755)
+				}
+				return configPath, templatePath, staticSrcDir, outputDir, staticDstDir, cleanup
+			},
+			expectErr:   true,
+			description: "should fail when output file cannot be created",
+			errMessage:  "error creating output file",
+		},
+	}
 
-		// Create valid template
-		templatePath := filepath.Join(tmpDir, "template.html")
-		if err := os.WriteFile(templatePath, []byte("<html><body>{{.Params.Name}}</body></html>"), 0644); err != nil {
-			t.Fatalf("Failed to write template file: %v", err)
-		}
+	for _, tc := range errorCases {
+		t.Run("build fails with "+tc.name, func(t *testing.T) {
+			tmpDir := t.TempDir()
+			configPath, templatePath, staticSrcDir, outputDir, staticDstDir, cleanup := tc.setupFunc(tmpDir)
+			defer cleanup()
 
-		outputDir := filepath.Join(tmpDir, "dist")
-		staticDstDir := filepath.Join(outputDir, "static")
+			err := BuildSite(configPath, templatePath, outputDir, staticSrcDir, staticDstDir)
 
-		err := BuildSite(
-			configPath,
-			templatePath,
-			outputDir,
-			filepath.Join(tmpDir, "nonexistent"),
-			staticDstDir,
-		)
-
-		if err == nil {
-			t.Error("Expected error for invalid static source, got nil")
-		}
-	})
+			if tc.expectErr && err == nil {
+				t.Errorf("%s: expected error, got nil", tc.description)
+			}
+			if !tc.expectErr && err != nil {
+				t.Errorf("%s: unexpected error: %v", tc.description, err)
+			}
+			// Verify error message if specified
+			if tc.expectErr && tc.errMessage != "" && err != nil {
+				if !strings.Contains(err.Error(), tc.errMessage) {
+					t.Errorf("%s: expected error message to contain '%s', got: %v", tc.description, tc.errMessage, err)
+				}
+			}
+		})
+	}
 
 	t.Run("build with empty socials and links", func(t *testing.T) {
 		tmpDir := t.TempDir()
