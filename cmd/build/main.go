@@ -139,25 +139,8 @@ func BuildSite(configPath, templatePath, outputDir, staticSrcDir, staticDstDir s
 }
 
 func run() int {
-	// Load configuration to display debug info
-	config, err := LoadConfig("config.yml")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error loading config.yml: %v\n", err)
-		return 1
-	}
-
-	// Debug: Print loaded config
-	fmt.Printf("Loaded config:\n")
-	fmt.Printf("  Name: %s\n", config.Params.Name)
-	fmt.Printf("  Headline: %s\n", config.Params.Headline)
-	fmt.Printf("  Avatar: %s\n", config.Params.Avatar)
-	fmt.Printf("  Theme Background: %s\n", config.Params.Theme.Background)
-	fmt.Printf("  Socials: %d\n", len(config.Params.Socials))
-	fmt.Printf("  Links: %d\n", len(config.Params.Links))
-	fmt.Println()
-
 	// Build the site
-	err = BuildSite("config.yml", "template/index.html", "dist", "template/static", "dist/static")
+	err := BuildSite("config.yml", "template/index.html", "dist", "template/static", "dist/static")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error building site: %v\n", err)
 		return 1

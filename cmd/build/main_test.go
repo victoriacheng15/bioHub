@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -104,79 +105,35 @@ func createFullTestSetup(t *testing.T, configYAML, templateContent string) (tmpD
 	return tmpDir, configPath, templatePath, staticSrcDir, staticDstDir, outputDir
 }
 
-// Helper function to check if string contains substring
-func contains(str, substr string) bool {
-	if len(str) == 0 || len(substr) == 0 {
-		return false
-	}
-
-	if str == substr {
-		return true
-	}
-
-	if len(str) > len(substr) {
-		// Check prefix
-		if str[:len(substr)] == substr {
-			return true
-		}
-		// Check suffix
-		if str[len(str)-len(substr):] == substr {
-			return true
-		}
-		// Check anywhere else
-		if findSubstring(str, substr) {
-			return true
-		}
-	}
-
-	return false
-}
-
-func findSubstring(str, substr string) bool {
-	for i := 0; i <= len(str)-len(substr); i++ {
-		if str[i:i+len(substr)] == substr {
-			return true
-		}
-	}
-	return false
-}
-
 // TestLoadConfig groups all LoadConfig tests
 func TestLoadConfig(t *testing.T) {
 	t.Run("valid config", func(t *testing.T) {
-		// Create a temporary config file
-		tmpDir := t.TempDir()
-		configPath := createTempConfigFile(t, tmpDir, "config.yml", getValidConfigYAML())
-
+		// Use helper to create full test setup (config, template, dirs)
+		tmpDir, configPath, _, _, _, _ := createFullTestSetup(t, getValidConfigYAML(), "<html></html>")
 		config, err := LoadConfig(configPath)
 		if err != nil {
 			t.Fatalf("LoadConfig failed: %v", err)
 		}
-
 		// Verify loaded values
 		if config.Params.Name != "Test User" {
 			t.Errorf("Expected Name 'Test User', got '%s'", config.Params.Name)
 		}
-
 		if config.Params.Headline != "Test Headline" {
 			t.Errorf("Expected Headline 'Test Headline', got '%s'", config.Params.Headline)
 		}
-
 		if config.Params.Theme.Background != "#1f2937" {
 			t.Errorf("Expected Background '#1f2937', got '%s'", config.Params.Theme.Background)
 		}
-
 		if len(config.Params.Socials) != 1 {
 			t.Errorf("Expected 1 Social, got %d", len(config.Params.Socials))
 		}
-
 		if config.Params.Socials[0].Platform != "GitHub" {
 			t.Errorf("Expected Platform 'GitHub', got '%s'", config.Params.Socials[0].Platform)
 		}
-
 		if len(config.Params.Links) != 1 {
 			t.Errorf("Expected 1 Link, got %d", len(config.Params.Links))
 		}
+		_ = tmpDir // silence unused var warning
 	})
 
 	t.Run("file not found", func(t *testing.T) {
@@ -187,19 +144,16 @@ func TestLoadConfig(t *testing.T) {
 	})
 
 	t.Run("invalid YAML", func(t *testing.T) {
-		tmpDir := t.TempDir()
-		configPath := createTempConfigFile(t, tmpDir, "invalid.yml", `This is not: valid: YAML: [
-`)
-
+		tmpDir, configPath, _, _, _, _ := createFullTestSetup(t, `This is not: valid: YAML: [
+`, "<html></html>")
 		_, err := LoadConfig(configPath)
 		if err == nil {
 			t.Error("Expected error for invalid YAML, got nil")
 		}
+		_ = tmpDir
 	})
 
 	t.Run("multiple socials and links", func(t *testing.T) {
-		tmpDir := t.TempDir()
-
 		configContent := `Params:
   Avatar: "test.jpg"
   Name: "Victoria"
@@ -226,27 +180,23 @@ func TestLoadConfig(t *testing.T) {
     - Name: "Blog"
       URL: "https://blog.example.com"
 `
-
-		configPath := createTempConfigFile(t, tmpDir, "config.yml", configContent)
+		tmpDir, configPath, _, _, _, _ := createFullTestSetup(t, configContent, "<html></html>")
 		config, _ := LoadConfig(configPath)
-
 		// Test multiple socials
 		if len(config.Params.Socials) != 2 {
 			t.Errorf("Expected 2 socials, got %d", len(config.Params.Socials))
 		}
-
 		if config.Params.Socials[1].Platform != "LinkedIn" {
 			t.Errorf("Expected second social to be LinkedIn, got %s", config.Params.Socials[1].Platform)
 		}
-
 		// Test multiple links
 		if len(config.Params.Links) != 2 {
 			t.Errorf("Expected 2 links, got %d", len(config.Params.Links))
 		}
-
 		if config.Params.Links[1].Name != "Blog" {
 			t.Errorf("Expected second link to be Blog, got %s", config.Params.Links[1].Name)
 		}
+		_ = tmpDir
 	})
 }
 
@@ -599,19 +549,19 @@ func TestBuildSite(t *testing.T) {
 		htmlContent, _ := os.ReadFile(filepath.Join(outputDir, "index.html"))
 		htmlStr := string(htmlContent)
 
-		if !contains(htmlStr, "Test User") {
+		if !strings.Contains(htmlStr, "Test User") {
 			t.Error("HTML does not contain user name")
 		}
 
-		if !contains(htmlStr, "Test Headline") {
+		if !strings.Contains(htmlStr, "Test Headline") {
 			t.Error("HTML does not contain headline")
 		}
 
-		if !contains(htmlStr, "GitHub") {
+		if !strings.Contains(htmlStr, "GitHub") {
 			t.Error("HTML does not contain social platform")
 		}
 
-		if !contains(htmlStr, "Website") {
+		if !strings.Contains(htmlStr, "Website") {
 			t.Error("HTML does not contain link name")
 		}
 	})
@@ -810,7 +760,7 @@ func TestBuildSite(t *testing.T) {
 		}
 
 		// Verify error message contains expected text
-		if !contains(err.Error(), "error creating output directory") {
+		if !strings.Contains(err.Error(), "error creating output directory") {
 			t.Errorf("Expected error to mention 'error creating output directory', got: %v", err)
 		}
 	})
