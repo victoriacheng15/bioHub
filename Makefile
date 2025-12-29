@@ -7,10 +7,10 @@ help: Show this help message
 
 
 build:
-	go build -o biohub cmd/build/main.go && ./biohub
+	go build -o biohub.exe cmd/build/main.go && ./biohub.exe
 
 clean:
-	rm -f biohub 
+	rm -f biohub.exe 
 	rm -rf dist
 
 format:
