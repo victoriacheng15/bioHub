@@ -12,6 +12,44 @@
   <title>BioHub - {{.Params.Name}}</title>
   <meta name="description" content="BioHub - {{.Params.Name}}">
   <style>
+    :root {
+      /* Colors (injected from Config) */
+      --bg-color: {{.Params.Theme.Background}};
+      --text-color: {{.Params.Theme.Text}};
+      --btn-bg: {{.Params.Theme.Button}};
+      --btn-text: {{.Params.Theme.ButtonText}};
+      --btn-hover: {{.Params.Theme.ButtonHover}};
+      --link-bg: {{.Params.Theme.Link}};
+      --link-text: {{.Params.Theme.LinkText}};
+      --link-hover: {{.Params.Theme.LinkHover}};
+
+      /* Spacing */
+      --spacing-sm: 0.5rem;
+      --spacing-md: 1rem;
+      --spacing-lg: 1.5rem;
+      --spacing-xl: 2.5rem;
+      --spacing-2xl: 3rem;
+
+      /* Borders */
+      --radius: 10px;
+      --radius-round: 50%;
+
+      /* Typography */
+      --font-size-md: 1.25rem;
+      --font-size-lg: 1.5rem;
+      --font-size-xl: 2.5rem;
+      
+      --letter-spacing: 2px;
+
+      /* Asset & Container Sizes */
+      --container-width: 600px;
+      --avatar-size: 150px;
+      --icon-size: 45px;
+
+      /* Transitions */
+      --transition: background 500ms ease-in-out;
+    }
+
     *,
     *::before,
     *::after {
@@ -21,8 +59,8 @@
     }
 
     body {
-      background: {{.Params.Theme.Background}};
-      color: {{.Params.Theme.Text}};
+      background: var(--bg-color);
+      color: var(--text-color);
       font-family: 'Open Sans', sans-serif;
     }
 
@@ -31,108 +69,110 @@
       color: inherit;
     }
 
+    ul, main {
+      list-style: none;
+    }
+
     #app {
       min-height: 100vh;
-      width: min(90%, 600px);
+      width: min(90%, var(--container-width));
       margin: 0 auto;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 2.5rem;
+      gap: var(--spacing-xl);
     }
 
     header {
-      margin: 3rem auto;
+      margin: var(--spacing-2xl) auto;
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: var(--spacing-lg);
       justify-content: center;
       align-items: center;
-    }
 
-    header h1 {
-      font-size: 2.5rem;
-      letter-spacing: 3px;
-    }
+      h1 {
+        font-size: var(--font-size-xl);
+        letter-spacing: var(--letter-spacing);
+      }
 
-    header img {
-      border-radius: 50%;
-      width: 150px;
-      aspect-ratio: 1;
-    }
+      img {
+        border-radius: var(--radius-round);
+        width: var(--avatar-size);
+        aspect-ratio: 1;
+      }
 
-    header p {
-      font-size: 1.25rem;
-      letter-spacing: 2px;
-      text-align: center;
-      line-height: 1.25;
-    }
+      p {
+        font-size: var(--font-size-md);
+        letter-spacing: var(--letter-spacing);
+        text-align: center;
+        line-height: 1.25;
+      }
 
-    header ul, main, ul {
-      list-style: none;
-    }
-
-    header ul {
-      display: flex;
-      gap: 1.5rem;
+      ul {
+        display: flex;
+        gap: var(--spacing-lg);
+      }
     }
 
     .btn {
-      background: {{.Params.Theme.Button}};
-      color: {{.Params.Theme.ButtonText}};
+      background: var(--btn-bg);
+      color: var(--btn-text);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0.5rem;
-      border-radius: 10px;
-      transition: background 500ms ease-in-out;
-    }
+      padding: var(--spacing-sm);
+      border-radius: var(--radius);
+      transition: var(--transition);
 
-    .btn:hover {
-      background: {{.Params.Theme.ButtonHover}};
+      &:hover {
+        background: var(--btn-hover);
+      }
     }
 
     .social-links .btn img {
-      border-radius: 6px;
+      border-radius: var(--radius);
+      width: var(--icon-size);
+      aspect-ratio: 1;
     }
 
     main {
       width: 100%;
-    }
 
-    main ul {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 1.75rem;
-    }
+      ul {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: var(--spacing-xl);
 
-    main ul li {
-      display: flex;
-      justify-content: center;
-      padding: 0.75rem;
-      width: 100%;
-      background: {{.Params.Theme.Link}};
-      border-radius: 10px;
-      transition: background 500ms ease-in-out;
-      cursor: pointer;
-    }
+        li {
+          display: flex;
+          justify-content: center;
+          padding: var(--spacing-md);
+          width: 100%;
+          background: var(--link-bg);
+          border-radius: var(--radius);
+          transition: var(--transition);
+          cursor: pointer;
 
-    main ul li:hover {
-      background: {{.Params.Theme.LinkHover}};
-    }
+          &:hover {
+            background: var(--link-hover);
+          }
 
-    main ul li a {
-      color: {{.Params.Theme.LinkText}};
-      font-size: 1.5rem;
-      font-weight: bold;
-      letter-spacing: 2px;
+          a {
+            color: var(--link-text);
+            font-size: var(--font-size-lg);
+            font-weight: bold;
+            letter-spacing: var(--letter-spacing);
+          }
+        }
+      }
     }
 
     footer {
       margin-top: auto;
-      padding-block: 1rem;
+      padding-block: var(--spacing-md);
     }
   </style>
 </head>
@@ -147,7 +187,7 @@
         {{range .Params.Socials}}
         <li>
           <a class="btn" href="{{.URL}}" target="_blank" rel="noopener noreferrer" aria-label="Visit me on {{.Platform}}">
-            <img src="{{.Icon}}" alt="{{.Platform}} icon" style="width: 45px; aspect-ratio: 1;" />
+            <img src="{{.Icon}}" alt="{{.Platform}} icon" />
           </a>
         </li>
         {{end}}
