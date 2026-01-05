@@ -1,5 +1,5 @@
 Params:
-  Avatar: "static/avatar.jpg"
+  Avatar: "static/avatar.png"
   Name: "Victoria Cheng"
   Headline: "Software Developer, SAIT ’26 | Go • TypeScript • Python | Building Observability Systems | prev Shopify Eng Intern"
 
@@ -28,7 +28,11 @@ Params:
       URL: "https://buymeacoffee.com/victoriacheng15"
 
   Links:
-    - Name: "🐧 Portfolio Site"
+    - Name: "🐧 Personal Site"
       URL: "https://victoriacheng15.vercel.app/"
-    - Name: "Blog"
-      URL: "https://victoriacheng15.vercel.app/blog"
+    - Name: "👋 About Me"
+      URL: "https://victoriacheng15.vercel.app/about"
+    - Name: "⚡ Life Lately"
+      URL: "https://victoriacheng15.vercel.app/now"
+    - Name: "🛠️ Engineering Logs
+      URL: "https://victoriacheng15.vercel.app/tags/retrospective"

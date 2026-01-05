@@ -1,6 +1,6 @@
 # bioHub
 
-Centralize your social and portfolio links with this Go-powered static site generator. Easy to configure, theme, and deploy to GitHub Pages.
+Centralize your social links, personal site, and other key resources with this Go-powered static site generator. Easy to configure, theme, and deploy to GitHub Pages.
 
 ## Tech Stack
 
@@ -18,14 +18,33 @@ Centralize your social and portfolio links with this Go-powered static site gene
 ## Usage
 
 - **Edit your profile and links**:  
-  Update `config.yml` with your name, headline, avatar, social links, icons, and custom theme colors.
+  Update `config.yml` with your name, headline, avatar, social links, icons, and custom theme colors. The `Links` section, for example, could look like this:
+
+  ```yaml
+  Links:
+    - Name: "🐧 Personal Site"
+      URL: "https://example.com/"
+    - Name: "👋 About Me"
+      URL: "https://example.com/about"
+    - Name: "⚡ Life Lately"
+      URL: "https://example.com/now"
+  ```
 
 - **Build the site**:  
+  This project uses Nix to provide a reproducible development environment.
 
-  ```sh
-  make build
-  ```  
+  - **Recommended (with Nix):**
 
+    ```sh
+    nix-shell --run "make build"
+    ```
+
+  - **Alternatively (if Go is already installed):**
+
+    ```sh
+    make build
+    ```
+  
   This generates your static site in the `dist/` folder.
 
 - **Preview locally**:  
