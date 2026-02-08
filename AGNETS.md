@@ -1,36 +1,52 @@
-# Project Agent Configuration
+# Agent Guide for bioHub
 
-## 1. Role & Objective
+This document provides context and instructions for AI agents working on the **bioHub** project, a custom Static Site Generator (SSG) written in Go.
 
-**Role:** Senior Software Engineer (Mentor & Builder)
-**Objective:** Maintain the `bioHub` static site generator while enforcing Senior+ engineering standards (Scalability, Observability, Maintainability).
+## 1. Project Overview
 
-## 2. Engineering Standards
+**bioHub** is a personal website and links platform built with a custom Go-based SSG. It is designed for simplicity, high performance, and zero external runtime dependencies.
 
-### Go (Build System)
+- **Core Tech**: Go (Golang) 1.25+
+- **Styling**: Minimal CSS / HTML templates
+- **Content**: Configuration-driven (via `config.yml`) and HTML templates
+- **Goal**: Single-binary simplicity and fast deployment.
 
-- **Idiomatic Code:** Follow effective Go conventions.
-- **Error Handling:** **Mandatory** error wrapping with context.
-  - *Bad:* `return err`
-  - *Good:* `return fmt.Errorf("loading config from %s: %w", path, err)`
-- **Dependencies:** Prefer standard library over external packages for the build tool to keep `go.mod` lean.
+## 2. Build and Test Commands
 
-### Frontend (HTML/CSS)
+The project uses a **Nix wrapper logic** within the `Makefile` to ensure a reproducible environment. You can run standard `make` commands; they will automatically use `nix-shell` if available.
 
-- **Layout:** Prefer `flex` or `grid` with `gap` for spacing. Avoid fighting margins.
-- **Padding Philosophy:** Restrict `p-` utilities to high-level containers (Buttons, Cards, Modals). Use layout gaps for internal spacing.
-- **Mobile-First:** Default styles target mobile screens. Use media queries *only* for tablet/desktop overrides.
+| Command | Description |
+| :--- | :--- |
+| `make build` | **Primary Build Command**. Builds the `biohub` binary and generates the site in `dist/`. |
+| `make test` | Runs all Go unit tests. |
+| `make vet` | Runs `go vet` for static analysis. |
+| `make format` | Automatically formats all Go code. |
+| `make cov-log` | Generates and displays a test coverage report in the terminal. |
 
-### Build & Verification
+**Important:** The build system handles the Nix environment automatically. If you are already inside a `nix-shell`, the commands will run directly.
 
-- Use the Nix environment for `build`, `format`, and `test`.
-- **Build Command:** `nix-shell --run "make build"`
-- **Pre-commit Checks:** Always format and test before committing changes.
-  - `nix-shell --run "make format"`
-  - `nix-shell --run "make test"`
+## 3. Code Style Guidelines
 
-## 3. Workflow Protocols
+### Go
 
-- **Mentorship:** Always explain the "Why" behind architectural decisions.
-- **Verification:** "Happy Path" is not enough. Challenge assumptions (e.g., "What if config is missing?").
-- **Code Review:** All generated code must be presented for user review before implementation.
+- **Strict Adherence**: Code **must** pass `go fmt` and `go vet`.
+- **Idiomatic Go**: Prefer standard library solutions. Keep functions small and focused.
+- **Error Handling**: Handle errors explicitly. Use descriptive error messages.
+- **Imports**: Group standard library imports separately from third-party imports.
+
+### Configuration & Templates
+
+- **YAML**: `config.yml` manages site metadata and links. Maintain clear structure.
+- **Templates**: HTML templates are located in `template/`. Maintain clean, semantic HTML.
+
+## 4. Testing Instructions
+
+- **Unit Tests**: Run `make test` to execute the Go test suite.
+- **Coverage**: Run `make cov-log` to see a detailed coverage report in the terminal.
+- **New Features**: Any new logic in the SSG **must** include accompanying unit tests in `main_test.go`.
+
+## 5. Security & Automation
+
+- **CI/CD**: GitHub Actions (`lint.yml`, `deploy.yml`) handle linting, testing, and deployment to GitHub Pages.
+- **File System**: The SSG reads from `template/` and `config.yml` and writes to `dist/`.
+- **Automation**: CI workflows are aligned with `Makefile` targets to ensure consistency between local and remote environments.

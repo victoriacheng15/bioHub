@@ -1,7 +1,7 @@
 Params:
   Avatar: "static/avatar.png"
   Name: "Victoria Cheng"
-  Headline: "Software Developer (Systems) | Go, Python, Linux, TS | Grafana & Observability | Prev @ Shopify | SAIT ’26"
+  Headline: "Software Developer (Backend & Platform) | Go, Python, Linux | Observability & GitOps | Prev @ Shopify"
 
   Theme:
     Background: "#1f2937"
