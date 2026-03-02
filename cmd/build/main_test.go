@@ -12,49 +12,12 @@ import (
 // Test Fixture Helpers (Plan #2)
 // ============================================================================
 
-// getMinimalTheme returns a Theme struct with only essential fields
-func getMinimalTheme() Theme {
-	return Theme{
-		Background:  "#ffffff",
-		Text:        "#000000",
-		Button:      "#000000",
-		ButtonText:  "#ffffff",
-		ButtonHover: "#000000",
-		Link:        "#000000",
-		LinkText:    "#ffffff",
-		LinkHover:   "#000000",
-	}
-}
-
-// getFullTheme returns a complete Theme struct with all colors set
-func getFullTheme() Theme {
-	return Theme{
-		Background:  "#1f2937",
-		Text:        "#ffa375",
-		Button:      "#60a5fa",
-		ButtonText:  "#f1f5f9",
-		ButtonHover: "#1147bb",
-		Link:        "#1147bb",
-		LinkText:    "#f1f5f9",
-		LinkHover:   "#09265D",
-	}
-}
-
 // getValidConfigYAML returns standard YAML config content for testing
 func getValidConfigYAML() string {
 	return `Params:
   Avatar: "static/avatar.jpg"
   Name: "Test User"
   Headline: "Test Headline"
-  Theme:
-    Background: "#1f2937"
-    Text: "#ffffff"
-    Button: "#60a5fa"
-    ButtonText: "#f1f5f9"
-    ButtonHover: "#1147bb"
-    Link: "#1147bb"
-    LinkText: "#f1f5f9"
-    LinkHover: "#09265D"
   Socials:
     - Platform: "GitHub"
       Icon: "static/icons/github.svg"
@@ -93,6 +56,14 @@ func createFullTestSetup(t *testing.T, configYAML, templateContent string) (tmpD
 		t.Fatalf("Failed to create template file: %v", err)
 	}
 
+	if err := os.WriteFile(filepath.Join(templateDir, "llms.txt"), []byte("llms"), 0644); err != nil {
+		t.Fatalf("Failed to create llms.txt template file: %v", err)
+	}
+
+	if err := os.WriteFile(filepath.Join(templateDir, "robots.txt"), []byte("robots"), 0644); err != nil {
+		t.Fatalf("Failed to create robots.txt template file: %v", err)
+	}
+
 	// Create static source directory
 	staticSrcDir = filepath.Join(templateDir, "static")
 	if err := os.MkdirAll(staticSrcDir, 0755); err != nil {
@@ -121,9 +92,6 @@ func TestLoadConfig(t *testing.T) {
 		}
 		if config.Params.Headline != "Test Headline" {
 			t.Errorf("Expected Headline 'Test Headline', got '%s'", config.Params.Headline)
-		}
-		if config.Params.Theme.Background != "#1f2937" {
-			t.Errorf("Expected Background '#1f2937', got '%s'", config.Params.Theme.Background)
 		}
 		if len(config.Params.Socials) != 1 {
 			t.Errorf("Expected 1 Social, got %d", len(config.Params.Socials))
@@ -159,15 +127,6 @@ func TestLoadConfig(t *testing.T) {
   Avatar: "test.jpg"
   Name: "Victoria"
   Headline: "Developer"
-  Theme:
-    Background: "#000000"
-    Text: "#ffffff"
-    Button: "#0000ff"
-    ButtonText: "#ffffff"
-    ButtonHover: "#0000cc"
-    Link: "#0000ff"
-    LinkText: "#ffffff"
-    LinkHover: "#0000cc"
   Socials:
     - Platform: "GitHub"
       Icon: "github.svg"
@@ -366,10 +325,6 @@ func TestTemplateRendering(t *testing.T) {
 			Params: Params{
 				Name:     "User",
 				Headline: "Headline",
-				Theme: Theme{
-					Background: "#fff",
-					Text:       "#000",
-				},
 				Socials: []Social{},
 				Links:   []Link{},
 			},
@@ -382,25 +337,7 @@ func TestTemplateRendering(t *testing.T) {
 		if len(config.Params.Links) != 0 {
 			t.Errorf("Expected empty links, got %d", len(config.Params.Links))
 		}
-	})
-
-	t.Run("config with all theme colors", func(t *testing.T) {
-		config := Config{
-			Params: Params{
-				Name:  "Test",
-				Theme: getFullTheme(),
-			},
-		}
-
-		// Verify all theme colors are set
-		if config.Params.Theme.Background == "" {
-			t.Error("Background color not set")
-		}
-		if config.Params.Theme.LinkHover == "" {
-			t.Error("LinkHover color not set")
-		}
-	})
-}
+	})}
 
 // TestStructsAndTypes groups all struct and type validation tests
 func TestStructsAndTypes(t *testing.T) {
@@ -440,31 +377,12 @@ func TestStructsAndTypes(t *testing.T) {
 			expectErr: false,
 		},
 		{
-			name: "theme struct with all colors",
-			testFunc: func() error {
-				theme := getFullTheme()
-				colors := []string{
-					theme.Background, theme.Text, theme.Button, theme.ButtonText,
-					theme.ButtonHover, theme.Link, theme.LinkText, theme.LinkHover,
-				}
-				for i, color := range colors {
-					if color == "" {
-						colorNames := []string{"Background", "Text", "Button", "ButtonText", "ButtonHover", "Link", "LinkText", "LinkHover"}
-						return fmt.Errorf("theme color %s is empty", colorNames[i])
-					}
-				}
-				return nil
-			},
-			expectErr: false,
-		},
-		{
 			name: "params struct with all fields",
 			testFunc: func() error {
 				params := Params{
 					Avatar:   "avatar.jpg",
 					Name:     "Victoria",
 					Headline: "Developer",
-					Theme:    getMinimalTheme(),
 					Socials:  []Social{{Platform: "GitHub", Icon: "gh.svg", URL: "https://github.com"}},
 					Links:    []Link{{Name: "Site", URL: "https://example.com"}},
 				}
@@ -473,17 +391,6 @@ func TestStructsAndTypes(t *testing.T) {
 				}
 				if len(params.Socials) != 1 || len(params.Links) != 1 {
 					return fmt.Errorf("params collections not set correctly")
-				}
-				return nil
-			},
-			expectErr: false,
-		},
-		{
-			name: "minimal theme struct",
-			testFunc: func() error {
-				theme := getMinimalTheme()
-				if theme.Background == "" || theme.Text == "" {
-					return fmt.Errorf("minimal theme missing essential colors")
 				}
 				return nil
 			},
@@ -513,15 +420,6 @@ func TestConfigIntegration(t *testing.T) {
   Avatar: "avatar.jpg"
   Name: "Victoria Cheng"
   Headline: "Developer | Designer"
-  Theme:
-    Background: "#1f2937"
-    Text: "#ffa375"
-    Button: "#60a5fa"
-    ButtonText: "#f1f5f9"
-    ButtonHover: "#1147bb"
-    Link: "#1147bb"
-    LinkText: "#f1f5f9"
-    LinkHover: "#09265D"
   Socials:
     - Platform: "GitHub"
       Icon: "github.svg"
@@ -573,9 +471,6 @@ func TestConfigIntegration(t *testing.T) {
 		}
 
 		// Verify theme is complete
-		if config.Params.Theme.Background == "" {
-			t.Error("Theme missing background color")
-		}
 	})
 }
 
@@ -656,6 +551,8 @@ func TestBuildSite(t *testing.T) {
 				if err := os.WriteFile(templatePath, []byte("<html></html>"), 0644); err != nil {
 					t.Fatalf("Failed to write template file: %v", err)
 				}
+				os.WriteFile(filepath.Join(tmpDir, "llms.txt"), []byte(""), 0644)
+				os.WriteFile(filepath.Join(tmpDir, "robots.txt"), []byte(""), 0644)
 				staticSrcDir := filepath.Join(tmpDir, "static")
 				outputDir := filepath.Join(tmpDir, "dist")
 				staticDstDir := filepath.Join(outputDir, "static")
@@ -672,15 +569,6 @@ func TestBuildSite(t *testing.T) {
   Avatar: "avatar.jpg"
   Name: "Test"
   Headline: "Test"
-  Theme:
-    Background: "#fff"
-    Text: "#000"
-    Button: "#000"
-    ButtonText: "#fff"
-    ButtonHover: "#000"
-    Link: "#000"
-    LinkText: "#fff"
-    LinkHover: "#000"
   Socials: []
   Links: []
 `)
@@ -700,15 +588,6 @@ func TestBuildSite(t *testing.T) {
   Avatar: "avatar.jpg"
   Name: "Test"
   Headline: "Test"
-  Theme:
-    Background: "#fff"
-    Text: "#000"
-    Button: "#000"
-    ButtonText: "#fff"
-    ButtonHover: "#000"
-    Link: "#000"
-    LinkText: "#fff"
-    LinkHover: "#000"
   Socials: []
   Links: []
 `)
@@ -716,6 +595,8 @@ func TestBuildSite(t *testing.T) {
 				if err := os.WriteFile(templatePath, []byte("<html><body>{{.Params.Name}}</body></html>"), 0644); err != nil {
 					t.Fatalf("Failed to write template file: %v", err)
 				}
+				os.WriteFile(filepath.Join(tmpDir, "llms.txt"), []byte(""), 0644)
+				os.WriteFile(filepath.Join(tmpDir, "robots.txt"), []byte(""), 0644)
 				outputDir := filepath.Join(tmpDir, "dist")
 				staticDstDir := filepath.Join(outputDir, "static")
 				return configPath, templatePath, filepath.Join(tmpDir, "nonexistent"), outputDir, staticDstDir, func() {}
@@ -732,6 +613,8 @@ func TestBuildSite(t *testing.T) {
 				if err := os.WriteFile(templatePath, []byte("<html><body>{{.Params.Name}}</body></html>"), 0644); err != nil {
 					t.Fatalf("Failed to write template file: %v", err)
 				}
+				os.WriteFile(filepath.Join(tmpDir, "llms.txt"), []byte(""), 0644)
+				os.WriteFile(filepath.Join(tmpDir, "robots.txt"), []byte(""), 0644)
 				staticSrcDir := filepath.Join(tmpDir, "static")
 				if err := os.MkdirAll(staticSrcDir, 0755); err != nil {
 					t.Fatalf("Failed to create static directory: %v", err)
@@ -789,15 +672,6 @@ func TestBuildSite(t *testing.T) {
   Avatar: "avatar.jpg"
   Name: "Test"
   Headline: "Test"
-  Theme:
-    Background: "#fff"
-    Text: "#000"
-    Button: "#000"
-    ButtonText: "#fff"
-    ButtonHover: "#000"
-    Link: "#000"
-    LinkText: "#fff"
-    LinkHover: "#000"
   Socials: []
   Links: []
 `
@@ -814,6 +688,8 @@ func TestBuildSite(t *testing.T) {
 		if err := os.WriteFile(templatePath, []byte(templateContent), 0644); err != nil {
 			t.Fatalf("Failed to write template file: %v", err)
 		}
+		os.WriteFile(filepath.Join(tmpDir, "llms.txt"), []byte(""), 0644)
+		os.WriteFile(filepath.Join(tmpDir, "robots.txt"), []byte(""), 0644)
 
 		// Create empty static dir
 		staticSrcDir := filepath.Join(tmpDir, "static")
@@ -843,15 +719,6 @@ func TestBuildSite(t *testing.T) {
   Avatar: "avatar.jpg"
   Name: "Test"
   Headline: "Test"
-  Theme:
-    Background: "#fff"
-    Text: "#000"
-    Button: "#000"
-    ButtonText: "#fff"
-    ButtonHover: "#000"
-    Link: "#000"
-    LinkText: "#fff"
-    LinkHover: "#000"
   Socials: []
   Links: []
 `
@@ -964,15 +831,6 @@ func TestRun(t *testing.T) {
   Avatar: "avatar.jpg"
   Name: "Test User"
   Headline: "Test Headline"
-  Theme:
-    Background: "#1f2937"
-    Text: "#ffffff"
-    Button: "#60a5fa"
-    ButtonText: "#f1f5f9"
-    ButtonHover: "#1147bb"
-    Link: "#1147bb"
-    LinkText: "#f1f5f9"
-    LinkHover: "#09265D"
   Socials: []
   Links: []
 `
