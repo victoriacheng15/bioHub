@@ -1,0 +1,14 @@
+# {{.Params.Name}}
+
+{{.Params.Headline}}
+
+This is a centralized hub for all the social links.
+
+## Socials
+{{- range .Params.Socials}}
+{{- if eq .Platform "GitHub"}}
+- {{.Platform}}: {{.URL}}
+{{- else if eq .Platform "LinkedIn"}}
+- {{.Platform}}: {{.URL}}
+{{- end}}
+{{- end}}

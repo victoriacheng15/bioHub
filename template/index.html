@@ -5,30 +5,40 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+    rel="stylesheet">
   <meta property="og:title" content="{{.Params.Name}} - BioHub">
   <meta property="og:description" content="{{.Params.Headline}}">
   <meta property="og:image" content="{{.Params.Avatar}}">
+  <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{.Params.Name}} - BioHub">
+  <meta name="twitter:description" content="{{.Params.Headline}}">
+  <meta name="twitter:image" content="{{.Params.Avatar}}">
   <title>BioHub - {{.Params.Name}}</title>
-  <meta name="description" content="BioHub - {{.Params.Name}}">
+  <meta name="author" content="{{.Params.Name}}">
+  <meta name="description" content="{{.Params.Headline}}">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <link rel="alternate" type="text/plain" href="/llms.txt" title="LLMs Text Version">
   <style>
     :root {
-      /* Colors (injected from Config) */
-      --bg-color: {{.Params.Theme.Background}};
-      --text-color: {{.Params.Theme.Text}};
-      --btn-bg: {{.Params.Theme.Button}};
-      --btn-text: {{.Params.Theme.ButtonText}};
-      --btn-hover: {{.Params.Theme.ButtonHover}};
-      --link-bg: {{.Params.Theme.Link}};
-      --link-text: {{.Params.Theme.LinkText}};
-      --link-hover: {{.Params.Theme.LinkHover}};
+      /* Colors */
+      --bg-color: #1f2937;
+      --text-color: #ffa375;
+      --btn-bg: #60a5fa;
+      --btn-text: #f1f5f9;
+      --btn-hover: #1147bb;
+      --link-bg: #1147bb;
+      --link-text: #f1f5f9;
+      --link-hover: #09265D;
 
       /* Spacing */
       --spacing-sm: 0.5rem;
       --spacing-md: 1rem;
       --spacing-lg: 1.5rem;
       --spacing-xl: 2.5rem;
-      --spacing-2xl: 3rem;
 
       /* Borders */
       --radius: 10px;
@@ -38,7 +48,7 @@
       --font-size-md: 1.25rem;
       --font-size-lg: 1.5rem;
       --font-size-xl: 2.5rem;
-      
+
       --letter-spacing: 2px;
 
       /* Asset & Container Sizes */
@@ -69,7 +79,7 @@
       color: inherit;
     }
 
-    ul, main {
+    ul {
       list-style: none;
     }
 
@@ -84,11 +94,10 @@
     }
 
     header {
-      margin: var(--spacing-2xl) auto;
+      margin-block: var(--spacing-xl);
       display: flex;
       flex-direction: column;
-      gap: var(--spacing-lg);
-      justify-content: center;
+      gap: var(--spacing-xl);
       align-items: center;
 
       h1 {
@@ -96,7 +105,7 @@
         letter-spacing: var(--letter-spacing);
       }
 
-      img {
+      .avatar {
         border-radius: var(--radius-round);
         width: var(--avatar-size);
         aspect-ratio: 1;
@@ -180,13 +189,14 @@
 <body>
   <div id="app">
     <header>
-      <img src="{{.Params.Avatar}}" alt="{{.Params.Name}}'s avatar" loading="lazy" decoding="async" />
+      <img class="avatar" src="{{.Params.Avatar}}" alt="{{.Params.Name}}'s avatar" loading="lazy" decoding="async" />
       <h1>{{.Params.Name}}</h1>
       <p>{{.Params.Headline}}</p>
       <ul class="social-links">
         {{range .Params.Socials}}
         <li>
-          <a class="btn" href="{{.URL}}" target="_blank" rel="noopener noreferrer" aria-label="Visit me on {{.Platform}}">
+          <a class="btn" href="{{.URL}}" target="_blank" rel="noopener noreferrer"
+            aria-label="Visit me on {{.Platform}}">
             <img src="{{.Icon}}" alt="{{.Platform}} icon" />
           </a>
         </li>

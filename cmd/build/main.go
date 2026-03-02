@@ -6,20 +6,10 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	textTemplate "text/template"
 
 	"gopkg.in/yaml.v3"
 )
-
-type Theme struct {
-	Background  string `yaml:"Background"`
-	Text        string `yaml:"Text"`
-	Button      string `yaml:"Button"`
-	ButtonText  string `yaml:"ButtonText"`
-	ButtonHover string `yaml:"ButtonHover"`
-	Link        string `yaml:"Link"`
-	LinkText    string `yaml:"LinkText"`
-	LinkHover   string `yaml:"LinkHover"`
-}
 
 type Social struct {
 	Platform string `yaml:"Platform"`
@@ -36,7 +26,6 @@ type Params struct {
 	Avatar   string   `yaml:"Avatar"`
 	Name     string   `yaml:"Name"`
 	Headline string   `yaml:"Headline"`
-	Theme    Theme    `yaml:"Theme"`
 	Socials  []Social `yaml:"Socials"`
 	Links    []Link   `yaml:"Links"`
 }
@@ -128,6 +117,44 @@ func BuildSite(configPath, templatePath, outputDir, staticSrcDir, staticDstDir s
 	// Render template with config data
 	if err := tmpl.Execute(out, config); err != nil {
 		return fmt.Errorf("error rendering template: %w", err)
+	}
+
+	templateDir := filepath.Dir(templatePath)
+
+	// Parse the text template for llms.txt
+	textTmpl, err := textTemplate.ParseFiles(filepath.Join(templateDir, "llms.txt"))
+	if err != nil {
+		return fmt.Errorf("error parsing llms.txt template: %w", err)
+	}
+
+	// Create output text file
+	textOut, err := os.Create(filepath.Join(outputDir, "llms.txt"))
+	if err != nil {
+		return fmt.Errorf("error creating output text file: %w", err)
+	}
+	defer textOut.Close()
+
+	// Render text template with config data
+	if err := textTmpl.Execute(textOut, config); err != nil {
+		return fmt.Errorf("error rendering llms.txt template: %w", err)
+	}
+
+	// Parse the template for robots.txt
+	robotsTmpl, err := textTemplate.ParseFiles(filepath.Join(templateDir, "robots.txt"))
+	if err != nil {
+		return fmt.Errorf("error parsing robots.txt template: %w", err)
+	}
+
+	// Create output robots.txt file
+	robotsOut, err := os.Create(filepath.Join(outputDir, "robots.txt"))
+	if err != nil {
+		return fmt.Errorf("error creating robots.txt output file: %w", err)
+	}
+	defer robotsOut.Close()
+
+	// Render robots.txt
+	if err := robotsTmpl.Execute(robotsOut, config); err != nil {
+		return fmt.Errorf("error rendering robots.txt template: %w", err)
 	}
 
 	// Copy static files

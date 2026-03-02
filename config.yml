@@ -3,16 +3,6 @@ Params:
   Name: "Victoria Cheng"
   Headline: "Software Developer (Platform & Backend) | Go, Python, Kubernetes | Observability & GitOps | Prev @ Shopify"
 
-  Theme:
-    Background: "#1f2937"
-    Text: "#ffa375"
-    Button: "#60a5fa"
-    ButtonText: "#f1f5f9"
-    ButtonHover: "#1147bb"
-    Link: "#1147bb"
-    LinkText: "#f1f5f9"
-    LinkHover: "#09265D"
-
   Socials:
     - Platform: "GitHub"
       Icon: "static/icons/github.svg"
