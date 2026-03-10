@@ -3,7 +3,10 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-    paths: ['template/**', 'cmd/**', 'config.yml']
+    paths:
+      - 'internal/web/template/**'
+      - 'cmd/web/**'
+      - 'config.yml'
   workflow_dispatch:
 
 permissions:
@@ -15,20 +18,23 @@ concurrency:
   group: "pages"
   cancel-in-progress: true
 
+env:
+  go-version: '1.25'
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6.0.0
-      - uses: actions/setup-go@v6.1.0
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
         with:
-          go-version: '1.25'
+          go-version: ${{ env.go-version }}
       
       - name: Build static site
         run: make build
       
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v4.0.0
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./dist
 
@@ -41,5 +47,5 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4.0.5
+        uses: actions/deploy-pages@v4
     
