@@ -1,42 +1,36 @@
-.PHONY: help build format test cov cov-log vet
+.PHONY: help build format test test-cov test-cov-log vet update	
 
 BINARY_NAME = biohub
-
-# Nix wrapper logic: Use nix-shell if available and not already inside one
-# Also check if we are in a CI environment where we usually want to use system tools
-USE_NIX = $(shell if command -v nix-shell >/dev/null 2>&1 && [ -z "$$IN_NIX_SHELL" ] && [ "$$GITHUB_ACTIONS" != "true" ]; then echo "yes"; else echo "no"; fi)
-
-ifeq ($(USE_NIX),yes)
-    NIX_RUN = nix-shell --run
-else
-    NIX_RUN = bash -c
-endif
 
 help:
 	@echo "Available targets:"
 	@echo "  format        Format the Go source code"
 	@echo "  vet           Run go vet"
 	@echo "  test          Run unit tests"
-	@echo "  cov           Generate test coverage report"
-	@echo "  cov-log       Generate and display test coverage report"
+	@echo "  test-cov      Generate test coverage report"
+	@echo "  test-cov-log  Generate and display test coverage report"
 	@echo "  build         Build the BioHub application"
+	@echo "  update        Update Go dependencies"
 	@echo "  help          Show this help message"
 
 format:
-	@$(NIX_RUN) "go fmt ./cmd/..."
+	go fmt ./...
 
 vet:
-	@$(NIX_RUN) "go vet ./cmd/..."
+	go vet ./...
 
 test:
-	@$(NIX_RUN) "go test ./cmd/... -v"
+	go test ./... -v
 
-cov:
-	@$(NIX_RUN) "go test -cover ./cmd/..."
+test-cov:
+	go test -cover ./...
 
-cov-log:
-	@$(NIX_RUN) "go test -coverprofile=coverage.out ./cmd/... && go tool cover -func=coverage.out && rm coverage.out || exit 1"
+test-cov-log:
+	go test -coverprofile=coverage.out ./... && go tool cover -func=coverage.out && rm coverage.out || exit 1
+
+update:
+	go get -u ./... && go mod tidy
 
 build:
-	@$(NIX_RUN) "go build -o $(BINARY_NAME) cmd/build/main.go" && ./$(BINARY_NAME)
+	go build -o $(BINARY_NAME) cmd/web/main.go && ./$(BINARY_NAME)
 	@rm -f $(BINARY_NAME)
