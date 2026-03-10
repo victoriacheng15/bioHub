@@ -31,19 +31,11 @@ Centralize your social links, personal site, and other key resources with this G
   ```
 
 - **Build the site**:  
-  This project uses Nix to provide a reproducible development environment.
+  Ensure you have Go installed, then run:
 
-  - **Recommended (with Nix):**
-
-    ```sh
-    nix-shell --run "make build"
-    ```
-
-  - **Alternatively (if Go is already installed):**
-
-    ```sh
-    make build
-    ```
+  ```sh
+  make build
+  ```
   
   This generates your static site in the `dist/` folder.
 
@@ -64,16 +56,17 @@ Centralize your social links, personal site, and other key resources with this G
 ```text
 bioHub/
 ├── cmd/
-│   └── build/
-│       └── main.go         # Go static site generator
-├── config.yml              # Profile, links, and theme config
-├── template/
-│   ├── index.html          # HTML template (with Go templating)
-│   └── static/
-│       ├── avatar.jpg      # Your avatar
-│       └── icons/          # Social icons (SVG recommended)
+│   └── web/
+│       └── main.go         # Site entry point
+├── internal/
+│   └── web/                # Core domain logic
+│       ├── config.go       # YAML config parsing
+│       ├── generator.go    # Site generation logic
+│       └── template/       # Site source templates
+│           ├── index.html
+│           └── static/
+├── config.yml              # Profile and links configuration
 ├── dist/                   # Generated static site (do not edit)
-├── Makefile                # Build and dev commands
-├── README.md
-└── .github/workflows/      # GitHub Pages deployment workflow
+├── Makefile                # Build and development commands
+└── .github/workflows/      # CI/CD and automation workflows
 ```

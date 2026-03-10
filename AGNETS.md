@@ -13,7 +13,7 @@ This document provides context and instructions for AI agents working on the **b
 
 ## 2. Build and Test Commands
 
-The project uses a **Nix wrapper logic** within the `Makefile` to ensure a reproducible environment. You can run standard `make` commands; they will automatically use `nix-shell` if available.
+The project uses a standard `Makefile` for consistent development workflows.
 
 | Command | Description |
 | :--- | :--- |
@@ -21,9 +21,8 @@ The project uses a **Nix wrapper logic** within the `Makefile` to ensure a repro
 | `make test` | Runs all Go unit tests. |
 | `make vet` | Runs `go vet` for static analysis. |
 | `make format` | Automatically formats all Go code. |
-| `make cov-log` | Generates and displays a test coverage report in the terminal. |
-
-**Important:** The build system handles the Nix environment automatically. If you are already inside a `nix-shell`, the commands will run directly.
+| `make update` | Updates Go module dependencies. |
+| `make test-cov-log` | Generates and displays a test coverage report in the terminal. |
 
 ## 3. Code Style Guidelines
 
@@ -31,22 +30,24 @@ The project uses a **Nix wrapper logic** within the `Makefile` to ensure a repro
 
 - **Strict Adherence**: Code **must** pass `go fmt` and `go vet`.
 - **Idiomatic Go**: Prefer standard library solutions. Keep functions small and focused.
+- **Project Structure**: Core logic resides in `internal/web/` while entry points are in `cmd/`.
 - **Error Handling**: Handle errors explicitly. Use descriptive error messages.
 - **Imports**: Group standard library imports separately from third-party imports.
 
 ### Configuration & Templates
 
 - **YAML**: `config.yml` manages site metadata and links. Maintain clear structure.
-- **Templates**: HTML templates are located in `template/`. Maintain clean, semantic HTML.
+- **Templates**: HTML templates are located in `internal/web/template/`. Maintain clean, semantic HTML.
 
 ## 4. Testing Instructions
 
 - **Unit Tests**: Run `make test` to execute the Go test suite.
-- **Coverage**: Run `make cov-log` to see a detailed coverage report in the terminal.
-- **New Features**: Any new logic in the SSG **must** include accompanying unit tests in `main_test.go`.
+- **Coverage**: Run `make test-cov-log` to see a detailed coverage report in the terminal.
+- **New Features**: Any new logic in the SSG **must** include accompanying unit tests in `internal/web/generator_test.go`.
 
 ## 5. Security & Automation
 
 - **CI/CD**: GitHub Actions (`lint.yml`, `deploy.yml`) handle linting, testing, and deployment to GitHub Pages.
-- **File System**: The SSG reads from `template/` and `config.yml` and writes to `dist/`.
+- **Dependabot**: Automated updates for Go modules and GitHub Actions are configured in `.github/dependabot.yml`.
+- **File System**: The SSG reads from `internal/web/template/` and `config.yml` and writes to `dist/`.
 - **Automation**: CI workflows are aligned with `Makefile` targets to ensure consistency between local and remote environments.
