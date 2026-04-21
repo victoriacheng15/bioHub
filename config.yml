@@ -19,10 +19,10 @@ Params:
 
   Links:
     - Name: "🐧 Personal Site"
-      URL: "https://victoriacheng15.vercel.app/"
+      URL: "https://victoriacheng15.dev/"
     - Name: "👋 About Me"
-      URL: "https://victoriacheng15.vercel.app/about"
+      URL: "https://victoriacheng15.dev/about"
     - Name: "⚡ Life Lately"
-      URL: "https://victoriacheng15.vercel.app/now"
+      URL: "https://victoriacheng15.dev/now"
     - Name: "🛠️ Engineering Logs"
-      URL: "https://victoriacheng15.vercel.app/tags/retrospective"
+      URL: "https://victoriacheng15.dev/tags/retrospective"
