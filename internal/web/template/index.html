@@ -24,15 +24,23 @@
   <link rel="alternate" type="text/plain" href="/llms.txt" title="LLMs Text Version">
   <style>
     :root {
-      /* Colors */
-      --bg-color: #1f2937;
-      --text-color: #ffa375;
-      --btn-bg: #60a5fa;
-      --btn-text: #f1f5f9;
-      --btn-hover: #1147bb;
-      --link-bg: #1147bb;
-      --link-text: #f1f5f9;
-      --link-hover: #09265D;
+      /* Colors System - Slate */
+      --color-slate-300: #cbd5e1;
+      --color-slate-500: #64748b;
+      --color-slate-900: #0f172a;
+      --color-slate-950: #020617;
+
+      /* Colors System - Violet (Accent) */
+      --color-violet-400: #a78bfa;
+      --color-violet-700: #6d28d9;
+      --color-violet-900: #4c1d95;
+
+      /* Semantic Mapping */
+      --bg-color: var(--color-slate-950);
+      --text-color: var(--color-slate-300);
+      --link-bg: var(--color-slate-900);
+      --link-text: var(--color-slate-300);
+      --link-hover-border: var(--color-violet-400);
 
       /* Spacing */
       --spacing-sm: 0.5rem;
@@ -54,10 +62,10 @@
       /* Asset & Container Sizes */
       --container-width: 600px;
       --avatar-size: 150px;
-      --icon-size: 45px;
+      --icon-size: 32px;
 
       /* Transitions */
-      --transition: background 500ms ease-in-out;
+      --transition: all 300ms ease-in-out;
     }
 
     *,
@@ -91,85 +99,98 @@
       flex-direction: column;
       align-items: center;
       gap: var(--spacing-xl);
+      padding: var(--spacing-xl) var(--spacing-lg);
+    }
+
+    header,
+    main,
+    footer,
+    main ul,
+    main li,
+    main a {
+      width: 100%;
+    }
+
+    header,
+    .btn,
+    .social-links,
+    main ul,
+    main li,
+    main a,
+    footer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     header {
-      margin-block: var(--spacing-xl);
-      display: flex;
       flex-direction: column;
-      gap: var(--spacing-xl);
-      align-items: center;
+      gap: var(--spacing-lg);
+      margin-block: var(--spacing-lg);
 
       h1 {
         font-size: var(--font-size-xl);
         letter-spacing: var(--letter-spacing);
+        color: var(--color-violet-400);
       }
 
       .avatar {
         border-radius: var(--radius-round);
         width: var(--avatar-size);
         aspect-ratio: 1;
+        border: 2px solid var(--color-violet-700);
       }
 
       p {
         font-size: var(--font-size-md);
-        letter-spacing: var(--letter-spacing);
+        letter-spacing: 1px;
         text-align: center;
         line-height: 1.25;
       }
 
       ul {
-        display: flex;
         gap: var(--spacing-lg);
       }
     }
 
-    .btn {
-      background: var(--btn-bg);
-      color: var(--btn-text);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .social-links .btn {
+      background: var(--color-slate-900);
+      border: 2px solid transparent;
       padding: var(--spacing-sm);
       border-radius: var(--radius);
       transition: var(--transition);
 
       &:hover {
-        background: var(--btn-hover);
+        border-color: var(--color-violet-400);
+      }
+
+      img {
+        width: var(--icon-size);
+        aspect-ratio: 1;
+        filter: invert(44%) sepia(91%) saturate(1253%) hue-rotate(229deg) brightness(101%) contrast(92%);
       }
     }
 
-    .social-links .btn img {
-      border-radius: var(--radius);
-      width: var(--icon-size);
-      aspect-ratio: 1;
-    }
-
     main {
-      width: 100%;
+      margin-block: var(--spacing-lg);
 
       ul {
-        display: flex;
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: var(--spacing-xl);
+        gap: var(--spacing-md);
 
         li {
-          display: flex;
-          justify-content: center;
-          padding: var(--spacing-md);
-          width: 100%;
           background: var(--link-bg);
+          border: 2px solid transparent;
           border-radius: var(--radius);
           transition: var(--transition);
           cursor: pointer;
 
           &:hover {
-            background: var(--link-hover);
+            border-color: var(--link-hover-border);
           }
 
           a {
+            padding: var(--spacing-md);
             color: var(--link-text);
             font-size: var(--font-size-lg);
             font-weight: bold;
@@ -181,7 +202,14 @@
 
     footer {
       margin-top: auto;
-      padding-block: var(--spacing-md);
+      padding-block: var(--spacing-lg);
+      border-top: 1px solid var(--color-violet-900);
+
+      p {
+        color: var(--color-slate-500);
+        font-size: 0.875rem;
+        letter-spacing: 1px;
+      }
     }
   </style>
 </head>
