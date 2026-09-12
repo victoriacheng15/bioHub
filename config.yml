@@ -1,7 +1,7 @@
 Params:
   Avatar: "static/avatar.png"
   Name: "Victoria Cheng"
-  Headline: "Software Developer - Backend/DevOps | LFX - Chaos Mesh | Go, Kubernetes, Azure | Prev Shopify"
+  Headline: "Software Developer - Backend & DevOps | Go, PostgreSQL, Kubernetes, Azure | Prev Shopify | LFX Mentee @ CNCF Chaos Mesh"
 
   Socials:
     - Platform: "GitHub"
