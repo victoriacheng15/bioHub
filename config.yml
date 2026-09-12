@@ -18,9 +18,11 @@ Params:
       URL: "https://buymeacoffee.com/victoriacheng15"
 
   Links:
+    - Name: "💼 Featured Work & Open Source"
+      URL: "https://victoriacheng15.dev/work"
     - Name: "🐧 Personal Site"
       URL: "https://victoriacheng15.dev/"
-    - Name: "👋 About Me"
-      URL: "https://victoriacheng15.dev/about"
     - Name: "🛠️ Engineering Logs"
       URL: "https://victoriacheng15.dev/tags/retrospective"
+    - Name: "👋 About Me"
+      URL: "https://victoriacheng15.dev/about"
